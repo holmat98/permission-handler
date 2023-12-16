@@ -1,0 +1,30 @@
+[versions]
+compileSdk = "34"
+minSdk = "26"
+targetSdk = "34"
+
+coreKtx = "1.12.0"
+androidGradlePlugin = "8.1.2"
+kotlin = "1.9.10"
+kotlinCompilerExtensionVersion = "1.5.3"
+lifecycle = "2.6.2"
+activityCompose = "1.8.1"
+compose = "1.5.4"
+navigationCompose = "2.7.6"
+material3 = "1.2.0-beta01"
+
+[libraries]
+androidx-corektx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
+androidx-compose-material = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
+androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin"  }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

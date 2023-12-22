@@ -35,4 +35,5 @@ android {
 dependencies {
 
     implementation(libs.androidx.corektx)
+    implementation(libs.kotlinx.coroutines)
 }

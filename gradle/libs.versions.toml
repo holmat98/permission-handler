@@ -1,6 +1,6 @@
 [versions]
 compileSdk = "34"
-minSdk = "26"
+minSdk = "30"
 targetSdk = "34"
 
 coreKtx = "1.12.0"

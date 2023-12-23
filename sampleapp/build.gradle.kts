@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.google.hilt)
 }
 
 android {
@@ -51,8 +53,16 @@ android {
 
 dependencies {
 
+    implementation(project(":permissionhandler"))
+
     implementation(libs.androidx.corektx)
     implementation(libs.androidx.lifecycle)
+
+    // compose
     implementation(libs.bundles.compose)
     debugImplementation(libs.bundles.compose.debug)
+
+    // hilt
+    implementation(libs.bundles.hilt)
+    ksp(libs.google.hilt.compiler)
 }

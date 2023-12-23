@@ -13,6 +13,9 @@ compose = "1.5.4"
 navigationCompose = "2.7.6"
 material3 = "1.2.0-beta01"
 coroutines = "1.7.3"
+junit = "5.9.1"
+assertj = "3.21.0"
+mockk = "1.13.5"
 
 [libraries]
 androidx-corektx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,8 +28,23 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+junit-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+junit-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+
+[bundles]
+compose = ["androidx-activity-compose", "androidx-compose-ui", "androidx-compose-material", "androidx-compose-preview"]
+compose-debug = ["androidx-compose-ui-tooling", "androidx-compose-test-manifest"]
+unitTesting = ["junit-jupiter", "junit-params", "assertj-core", "mockk", "kotlinx-coroutines-test"]
+unitTesting-compile = ["junit-api"]
+unitTesting-runtime = ["junit-engine"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin"  }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -6,6 +6,7 @@ import com.mateuszholik.permissionhandler.extensions.isGranted
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
+import com.mateuszholik.permissionhandler.providers.SdkProvider
 import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,16 +30,33 @@ interface SinglePermissionHandler {
      */
     suspend fun handleBackFromSettings()
 
-    class Builder internal constructor(
-        private val context: Context
-    ) {
+    class Builder internal constructor(private val context: Context) {
 
+        /**
+         * Permission
+         */
         lateinit var permission: String
+
+        /**
+         * Indicates if the permission is required by the application to function correctly.
+         * Default value is set to false
+         */
         var isOptional: Boolean = false
+
+        /**
+         * Minimal Android version for this permission.
+         * For example android.permission.POST_NOTIFICATIONS should have minSdk value set to 33.
+         * Default value is set to 1.
+         */
         var minSdk: Int = Build.VERSION_CODES.ICE_CREAM_SANDWICH
 
+        /**
+         * Returns the instance of the SinglePermissionHandler.
+         *
+         * @throws IllegalStateException when permission is not provided.
+         */
         fun build(): SinglePermissionHandler {
-            if (!this::permission.isInitialized) {
+            if (!::permission.isInitialized) {
                 error("Permission was not provided")
             }
 
@@ -55,8 +73,11 @@ interface SinglePermissionHandler {
     }
 
     companion object {
-        fun builder(context: Context, init: Builder.() -> Unit): SinglePermissionHandler =
-            SinglePermissionHandler.Builder(context).apply(init).build()
+        fun builder(
+            context: Context,
+            init: Builder.() -> Unit
+        ): SinglePermissionHandler =
+            Builder(context).apply(init).build()
     }
 }
 
@@ -116,8 +137,12 @@ internal class SinglePermissionHandlerImpl(
             PermissionState.NOT_ASKED -> SinglePermissionState.AskForPermission(permission.name)
         }
 
-    private fun getInitialState(): SinglePermissionState =
-        when (currentPermissionState) {
+    private fun getInitialState(): SinglePermissionState {
+        if (SdkProvider.provide() < permission.minSdk) {
+            return SinglePermissionState.Granted
+        }
+
+        return when (currentPermissionState) {
             PermissionState.NOT_ASKED -> SinglePermissionState.AskForPermission(permission.name)
             PermissionState.SKIPPED,
             PermissionState.SHOW_RATIONALE -> SinglePermissionState.ShowRationale(permission.name)
@@ -134,6 +159,7 @@ internal class SinglePermissionHandlerImpl(
                 }
             }
         }
+    }
 
     private fun PermissionState.nextPermissionState(
         isGranted: Boolean,

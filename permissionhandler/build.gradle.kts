@@ -36,4 +36,13 @@ dependencies {
 
     implementation(libs.androidx.corektx)
     implementation(libs.kotlinx.coroutines)
+
+    // unit testing
+    testImplementation(libs.bundles.unitTesting)
+    testCompileOnly(libs.bundles.unitTesting.compile)
+    testRuntimeOnly(libs.bundles.unitTesting.runtime)
+}
+
+tasks.withType(Test::class) {
+    useJUnitPlatform()
 }

@@ -53,10 +53,6 @@ dependencies {
 
     implementation(libs.androidx.corektx)
     implementation(libs.androidx.lifecycle)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.test.manifest)
+    implementation(libs.bundles.compose)
+    debugImplementation(libs.bundles.compose.debug)
 }

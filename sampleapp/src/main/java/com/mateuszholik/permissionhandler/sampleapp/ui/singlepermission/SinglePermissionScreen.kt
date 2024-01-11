@@ -97,7 +97,8 @@ fun SinglePermissionScreen(viewModel: SinglePermissionViewModel = hiltViewModel(
                     }
                 )
             }
-            is SinglePermissionState.Granted -> {
+            SinglePermissionState.Granted,
+            SinglePermissionState.Skipped -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

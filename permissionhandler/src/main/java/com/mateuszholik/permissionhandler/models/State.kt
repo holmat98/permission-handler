@@ -1,17 +1,21 @@
 package com.mateuszholik.permissionhandler.models
 
-sealed class SinglePermissionState {
+sealed interface State
+
+sealed class SinglePermissionState : State {
 
     data class AskForPermission(val permission: String) : SinglePermissionState()
 
     data class ShowRationale(val permission: String) : SinglePermissionState()
+
+    data object Skipped : SinglePermissionState()
 
     data object Denied : SinglePermissionState()
 
     data object Granted : SinglePermissionState()
 }
 
-sealed class MultiplePermissionState {
+sealed class MultiplePermissionState : State {
 
     data class AskForPermissions(val permissions: List<String>) : MultiplePermissionState()
 

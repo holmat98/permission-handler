@@ -6,7 +6,9 @@ import com.mateuszholik.permissionhandler.SinglePermissionHandler
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
 import com.mateuszholik.permissionhandler.sampleapp.ui.di.CameraPermissionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,7 +18,11 @@ class SinglePermissionViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<SinglePermissionState>
-        get() = cameraPermissionHandler.state
+        get() = cameraPermissionHandler.observe().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            SinglePermissionState.Skipped
+        )
 
     fun handlePermissionResult(isGranted: Boolean) {
         viewModelScope.launch {

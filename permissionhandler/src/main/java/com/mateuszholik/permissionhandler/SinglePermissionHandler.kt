@@ -3,32 +3,33 @@ package com.mateuszholik.permissionhandler
 import android.content.Context
 import android.os.Build
 import com.mateuszholik.permissionhandler.extensions.isGranted
+import com.mateuszholik.permissionhandler.listeners.OnStateChangedListener
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
 import com.mateuszholik.permissionhandler.providers.SdkProvider
 import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 interface SinglePermissionHandler {
 
-    val state: StateFlow<SinglePermissionState>
+    fun observe(): Flow<SinglePermissionState>
 
     /**
      * This method handles the result from system permission dialog
      *
      * @throws IllegalStateException when called if current state is [Granted][SinglePermissionState.Granted] or [Denied][SinglePermissionState.Denied]
      */
-    suspend fun handlePermissionResult(isGranted: Boolean)
+    fun handlePermissionResult(isGranted: Boolean)
 
     /**
      * This method handles the permission state when user comes back from settings
      *
      * @throws IllegalStateException when called if current state is not [Denied][SinglePermissionState.Denied]
      */
-    suspend fun handleBackFromSettings()
+    fun handleBackFromSettings()
 
     class Builder internal constructor(private val context: Context) {
 
@@ -75,7 +76,7 @@ interface SinglePermissionHandler {
     companion object {
         fun builder(
             context: Context,
-            init: Builder.() -> Unit
+            init: Builder.() -> Unit,
         ): SinglePermissionHandler =
             Builder(context).apply(init).build()
     }
@@ -89,53 +90,61 @@ internal class SinglePermissionHandlerImpl(
 
     private var currentPermissionState: PermissionState =
         permissionsPreferenceAssistant.getPermissionState(permission.name)
+        set(value) {
+            permissionsPreferenceAssistant.savePermissionState(permission.name, value)
+            field = value
+        }
 
-    private val _state: MutableStateFlow<SinglePermissionState> =
-        MutableStateFlow(getInitialState())
-    override val state: StateFlow<SinglePermissionState>
-        get() = _state.asStateFlow()
+    private var currentState: SinglePermissionState? = null
+    private var listener: OnStateChangedListener<SinglePermissionState>? = null
 
-    override suspend fun handlePermissionResult(isGranted: Boolean) {
-        val currentState = _state.value
+    override fun observe(): Flow<SinglePermissionState> =
+        callbackFlow {
+            listener = OnStateChangedListener {
+                trySend(it)
+                currentState = it
+            }
+
+            listener?.onStateChanged(getInitialState())
+
+            awaitClose {
+                listener = null
+                currentState = null
+            }
+        }
+
+    override fun handlePermissionResult(isGranted: Boolean) {
         if (currentState is SinglePermissionState.Granted || currentState is SinglePermissionState.Denied) {
             error("Illegal state - called when permission state is $currentState")
         }
 
-        val nextState = currentPermissionState.nextPermissionState(isGranted, permission.isOptional)
-        currentPermissionState = nextState
-        permissionsPreferenceAssistant.savePermissionState(
-            permissionName = permission.name,
-            state = nextState
-        )
+        currentPermissionState =
+            currentPermissionState.nextPermissionState(isGranted, permission.isOptional)
 
-        _state.emit(getNextSinglePermissionState())
+        val nextState = when (currentPermissionState) {
+            PermissionState.GRANTED -> SinglePermissionState.Granted
+            PermissionState.SKIPPED -> SinglePermissionState.Skipped
+            PermissionState.DENIED -> SinglePermissionState.Denied
+            PermissionState.SHOW_RATIONALE -> SinglePermissionState.ShowRationale(permission.name)
+            PermissionState.NOT_ASKED -> SinglePermissionState.AskForPermission(permission.name)
+        }
+
+        listener?.onStateChanged(nextState)
     }
 
-    override suspend fun handleBackFromSettings() {
-        val currentState = _state.value
+    override fun handleBackFromSettings() {
         if (currentState !is SinglePermissionState.Denied) {
             error("Illegal state - called when permission state is $currentState")
         }
 
         if (permission.isGranted(context)) {
             currentPermissionState = PermissionState.GRANTED
-            permissionsPreferenceAssistant.savePermissionState(
-                permissionName = permission.name,
-                state = PermissionState.GRANTED
-            )
 
-            _state.emit(SinglePermissionState.Granted)
+            listener?.onStateChanged(SinglePermissionState.Granted)
+        } else {
+            listener?.onStateChanged(SinglePermissionState.Denied)
         }
     }
-
-    private fun getNextSinglePermissionState(): SinglePermissionState =
-        when (currentPermissionState) {
-            PermissionState.GRANTED -> SinglePermissionState.Granted
-            PermissionState.SKIPPED,
-            PermissionState.DENIED -> SinglePermissionState.Denied
-            PermissionState.SHOW_RATIONALE -> SinglePermissionState.ShowRationale(permission.name)
-            PermissionState.NOT_ASKED -> SinglePermissionState.AskForPermission(permission.name)
-        }
 
     private fun getInitialState(): SinglePermissionState {
         if (SdkProvider.provide() < permission.minSdk) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import app.cash.turbine.test
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
@@ -54,76 +55,81 @@ internal class SinglePermissionHandlerTest {
             PermissionState.DENIED to SinglePermissionState.Denied,
         ).map { (permissionState, expectedResult) ->
             dynamicTest("When saved permission state is equal to $permissionState then the initial state is equal to $expectedResult") {
-                initializePermissionHandler(savedPermissionState = permissionState)
+                runTest {
+                    initializePermissionHandler(savedPermissionState = permissionState)
 
-                val initialState = permissionHandler.state.value
-
-                assertThat(initialState).isEqualTo(expectedResult)
+                    permissionHandler.observe().test {
+                        assertThat(awaitItem()).isEqualTo(expectedResult)
+                    }
+                }
             }
         }
 
     @Test
-    fun `When saved permission state is GRANTED then the initial state is equal to Granted`() {
-        mockkContextCompat(isGranted = true)
-        initializePermissionHandler(savedPermissionState = PermissionState.GRANTED)
+    fun `When saved permission state is GRANTED then the initial state is equal to Granted`() =
+        runTest {
+            mockkContextCompat(isGranted = true)
+            initializePermissionHandler(savedPermissionState = PermissionState.GRANTED)
 
-        val initialState = permissionHandler.state.value
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
+            }
 
-        assertThat(initialState).isEqualTo(SinglePermissionState.Granted)
-
-        verify(exactly = 0) {
-            permissionsPreferenceAssistant.savePermissionState(
-                PERMISSION.name,
-                PermissionState.SHOW_RATIONALE
-            )
+            verify(exactly = 0) {
+                permissionsPreferenceAssistant.savePermissionState(
+                    PERMISSION.name,
+                    PermissionState.SHOW_RATIONALE
+                )
+            }
         }
-    }
 
     @Test
-    fun `When saved permission state is GRANTED and permission was removed in settings then the initial state is equal to ShowRationale`() {
-        mockkContextCompat(isGranted = false)
-        initializePermissionHandler(savedPermissionState = PermissionState.GRANTED)
+    fun `When saved permission state is GRANTED and permission was removed in settings then the initial state is equal to ShowRationale`() =
+        runTest {
+            mockkContextCompat(isGranted = false)
+            initializePermissionHandler(savedPermissionState = PermissionState.GRANTED)
 
-        val initialState = permissionHandler.state.value
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.ShowRationale(PERMISSION.name))
+            }
 
-        assertThat(initialState).isEqualTo(SinglePermissionState.ShowRationale(PERMISSION.name))
-
-        verify(exactly = 1) {
-            permissionsPreferenceAssistant.savePermissionState(
-                PERMISSION.name,
-                PermissionState.SHOW_RATIONALE
-            )
+            verify(exactly = 1) {
+                permissionsPreferenceAssistant.savePermissionState(
+                    PERMISSION.name,
+                    PermissionState.SHOW_RATIONALE
+                )
+            }
         }
-    }
 
     @Test
-    fun `When Android version is lower than min sdk for the permission then initial state is equal to Granted`() {
-        initializePermissionHandler(
-            permission = PERMISSION.copy(minSdk = 33),
-            androidSdkVersion = 32
-        )
+    fun `When Android version is lower than min sdk for the permission then initial state is equal to Granted`() =
+        runTest {
+            initializePermissionHandler(
+                permission = PERMISSION.copy(minSdk = 33),
+                androidSdkVersion = 32
+            )
 
-        val initialState = permissionHandler.state.value
-
-        assertThat(initialState).isEqualTo(SinglePermissionState.Granted)
-    }
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
+            }
+        }
 
     @Test
-    fun `When permission is optional and it was denied by the user then Denied is the current state`() =
+    fun `When permission is optional and it was denied by the user then Skipped is the current state`() =
         runTest {
             initializePermissionHandler(permission = PERMISSION.copy(isOptional = true))
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.AskForPermission(
-                    PERMISSION.name
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.AskForPermission(
+                        PERMISSION.name
+                    )
                 )
-            )
 
-            permissionHandler.handlePermissionResult(isGranted = false)
+                permissionHandler.handlePermissionResult(isGranted = false)
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Denied)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Skipped)
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -138,17 +144,21 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler()
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.AskForPermission(
-                    PERMISSION.name
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.AskForPermission(
+                        PERMISSION.name
+                    )
                 )
-            )
 
-            permissionHandler.handlePermissionResult(isGranted = false)
+                permissionHandler.handlePermissionResult(isGranted = false)
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.ShowRationale(PERMISSION.name))
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.ShowRationale(
+                        PERMISSION.name
+                    )
+                )
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -163,17 +173,17 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler()
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.AskForPermission(
-                    PERMISSION.name
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.AskForPermission(
+                        PERMISSION.name
+                    )
                 )
-            )
 
-            permissionHandler.handlePermissionResult(isGranted = true)
+                permissionHandler.handlePermissionResult(isGranted = true)
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Granted)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -188,17 +198,17 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler(savedPermissionState = PermissionState.SHOW_RATIONALE)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.ShowRationale(
-                    PERMISSION.name
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.ShowRationale(
+                        PERMISSION.name
+                    )
                 )
-            )
 
-            permissionHandler.handlePermissionResult(isGranted = false)
+                permissionHandler.handlePermissionResult(isGranted = false)
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Denied)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -213,17 +223,17 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler(savedPermissionState = PermissionState.SHOW_RATIONALE)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.ShowRationale(
-                    PERMISSION.name
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.ShowRationale(
+                        PERMISSION.name
+                    )
                 )
-            )
 
-            permissionHandler.handlePermissionResult(isGranted = true)
+                permissionHandler.handlePermissionResult(isGranted = true)
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Granted)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -239,15 +249,15 @@ internal class SinglePermissionHandlerTest {
             mockkContextCompat(isGranted = true)
             initializePermissionHandler(savedPermissionState = PermissionState.DENIED)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.Denied
-            )
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.Denied
+                )
 
-            permissionHandler.handleBackFromSettings()
+                permissionHandler.handleBackFromSettings()
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Granted)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
+            }
 
             verify(exactly = 1) {
                 permissionsPreferenceAssistant.savePermissionState(
@@ -264,15 +274,15 @@ internal class SinglePermissionHandlerTest {
 
             initializePermissionHandler(savedPermissionState = PermissionState.DENIED)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.Denied
-            )
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.Denied
+                )
 
-            permissionHandler.handleBackFromSettings()
+                permissionHandler.handleBackFromSettings()
 
-            val currentState = permissionHandler.state.value
-
-            assertThat(currentState).isEqualTo(SinglePermissionState.Denied)
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
+            }
 
             verify(exactly = 0) {
                 permissionsPreferenceAssistant.savePermissionState(PERMISSION.name, any())
@@ -285,27 +295,29 @@ internal class SinglePermissionHandlerTest {
             mockkContextCompat(isGranted = true)
             initializePermissionHandler()
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.AskForPermission(PERMISSION.name)
-            )
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.AskForPermission(PERMISSION.name)
+                )
 
-            permissionHandler.handlePermissionResult(false)
+                permissionHandler.handlePermissionResult(false)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.ShowRationale(PERMISSION.name)
-            )
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.ShowRationale(PERMISSION.name)
+                )
 
-            permissionHandler.handlePermissionResult(false)
+                permissionHandler.handlePermissionResult(false)
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.Denied
-            )
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.Denied
+                )
 
-            permissionHandler.handleBackFromSettings()
+                permissionHandler.handleBackFromSettings()
 
-            assertThat(permissionHandler.state.value).isEqualTo(
-                SinglePermissionState.Granted
-            )
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.Granted
+                )
+            }
         }
 
     @Test
@@ -313,8 +325,16 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler()
 
-            assertThrows<IllegalStateException> {
-                permissionHandler.handleBackFromSettings()
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(
+                    SinglePermissionState.AskForPermission(
+                        PERMISSION.name
+                    )
+                )
+
+                assertThrows<IllegalStateException> {
+                    permissionHandler.handleBackFromSettings()
+                }
             }
         }
 
@@ -323,8 +343,12 @@ internal class SinglePermissionHandlerTest {
         runTest {
             initializePermissionHandler(savedPermissionState = PermissionState.DENIED)
 
-            assertThrows<IllegalStateException> {
-                permissionHandler.handlePermissionResult(isGranted = false)
+            permissionHandler.observe().test {
+                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
+
+                assertThrows<IllegalStateException> {
+                    permissionHandler.handlePermissionResult(isGranted = false)
+                }
             }
         }
 

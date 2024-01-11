@@ -20,6 +20,7 @@ mockk = "1.13.5"
 hilt = "2.48"
 hiltCompose = "1.1.0"
 ksp = "1.9.10-1.0.13"
+turbine = "1.0.0"
 
 [libraries]
 androidx-corektx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,11 +45,12 @@ mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "moc
 google-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 google-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 google-hilt-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompose" }
+app-cash-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [bundles]
 compose = ["androidx-activity-compose", "androidx-compose-ui", "androidx-compose-material", "androidx-compose-preview", "androidx-compose-lifecycle"]
 compose-debug = ["androidx-compose-ui-tooling", "androidx-compose-test-manifest"]
-unitTesting = ["junit-jupiter", "junit-params", "assertj-core", "mockk", "kotlinx-coroutines-test"]
+unitTesting = ["junit-jupiter", "junit-params", "assertj-core", "mockk", "kotlinx-coroutines-test", "app-cash-turbine"]
 unitTesting-compile = ["junit-api"]
 unitTesting-runtime = ["junit-engine"]
 hilt = ["google-hilt", "google-hilt-compose"]

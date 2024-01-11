@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
 import com.mateuszholik.permissionhandler.sampleapp.R
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,14 +143,13 @@ private fun Content(
             )
         }
 
-        Button(
+        CommonButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
+            textResId = buttonResId,
             onClick = onClick
-        ) {
-            Text(text = stringResource(buttonResId))
-        }
+        )
     }
 }
 

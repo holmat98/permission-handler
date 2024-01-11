@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.di
+package com.mateuszholik.permissionhandler.sampleapp.di
 
 import android.Manifest
 import android.content.Context

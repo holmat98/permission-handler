@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.permissionhandler.SinglePermissionHandler
 import com.mateuszholik.permissionhandler.models.SinglePermissionState
-import com.mateuszholik.permissionhandler.sampleapp.ui.di.CameraPermissionHandler
+import com.mateuszholik.permissionhandler.sampleapp.di.CameraPermissionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

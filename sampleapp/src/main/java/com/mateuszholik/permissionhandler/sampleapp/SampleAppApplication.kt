@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui
+package com.mateuszholik.permissionhandler.sampleapp
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

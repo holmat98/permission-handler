@@ -12,11 +12,6 @@ fun DependencyHandler.activity() {
     implementation(AndroidX.ActivityCompose.DEPENDENCY)
 }
 
-fun DependencyHandler.hilt() {
-    implementation(Google.Hilt.DEPENDENCY)
-    ksp(Google.Hilt.Compiler.DEPENDENCY)
-}
-
 fun DependencyHandler.compose() {
     implementation(AndroidX.Compose.UI)
     implementation(AndroidX.Compose.MATERIAL)

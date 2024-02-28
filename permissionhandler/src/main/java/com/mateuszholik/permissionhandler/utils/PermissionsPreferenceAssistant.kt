@@ -2,13 +2,13 @@ package com.mateuszholik.permissionhandler.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mateuszholik.permissionhandler.models.PermissionState
+import com.mateuszholik.permissionhandler.models.State
 
 internal interface PermissionsPreferenceAssistant {
 
-    fun savePermissionState(permissionName: String, state: PermissionState)
+    fun saveState(permissionName: String, state: State)
 
-    fun getPermissionState(permissionName: String): PermissionState
+    fun getState(permissionName: String): State
 
     companion object {
         internal fun newInstance(context: Context): PermissionsPreferenceAssistant =
@@ -24,17 +24,17 @@ internal class PermissionPreferenceAssistantImpl(
         context.getSharedPreferences(SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE)
     }
 
-    override fun savePermissionState(permissionName: String, state: PermissionState) {
+    override fun saveState(permissionName: String, state: State) {
         sharedPreferences
             .edit()
             .putString(permissionName, state.name)
             .apply()
     }
 
-    override fun getPermissionState(permissionName: String): PermissionState =
+    override fun getState(permissionName: String): State =
         sharedPreferences.getString(permissionName, null)?.let {
-            PermissionState.valueOf(it)
-        } ?: PermissionState.NOT_ASKED
+            State.valueOf(it)
+        } ?: State.NOT_ASKED
 
     private companion object {
         const val SHARED_PREFS_FILE_NAME = "permissions_preferences"

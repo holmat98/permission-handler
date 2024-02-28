@@ -1,10 +1,6 @@
 package com.mateuszholik.permissionhandler.sampleapp.ui.singlepermission
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.Manifest
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,33 +18,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mateuszholik.permissionhandler.models.SinglePermissionState
+import com.mateuszholik.permissionhandler.models.Permission
+import com.mateuszholik.permissionhandler.models.PermissionState
+import com.mateuszholik.permissionhandler.rememberPermissionHandler
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SinglePermissionScreen(viewModel: SinglePermissionViewModel = hiltViewModel()) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val context = LocalContext.current
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { result -> viewModel.handlePermissionResult(result) }
-
-    val settingsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-    ) { viewModel.handleBackFromSettings() }
+fun SinglePermissionScreen() {
+    val permissionHandler by rememberPermissionHandler(
+        permission = Permission(
+            name = Manifest.permission.CAMERA,
+            minSdk = 26
+        )
+    )
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
@@ -63,42 +53,25 @@ fun SinglePermissionScreen(viewModel: SinglePermissionViewModel = hiltViewModel(
             start = 16.dp,
             end = 16.dp,
         )
-        when (state) {
-            is SinglePermissionState.ShowRationale -> {
-                val permission = (state as SinglePermissionState.ShowRationale).permission
+        when (permissionHandler.currentPermissionState) {
+            is PermissionState.ShowRationale,
+            is PermissionState.AskForPermission -> {
                 Content(
-                    text = stringResource(R.string.permission_show_rationale, permission),
+                    text = stringResource(R.string.permission_show_message),
                     buttonResId = R.string.button_grant_permission,
                     paddingValues = paddingValues,
-                    onClick = { permissionLauncher.launch(permission) }
+                    onClick = permissionHandler.launchPermissionDialog
                 )
             }
-            is SinglePermissionState.AskForPermission -> {
-                val permission = (state as SinglePermissionState.AskForPermission).permission
-                Content(
-                    text = stringResource(R.string.permission_never_asked, permission),
-                    buttonResId = R.string.button_grant_permission,
-                    paddingValues = paddingValues,
-                    onClick = { permissionLauncher.launch(permission) }
-                )
-            }
-            is SinglePermissionState.Denied -> {
+            is PermissionState.Denied -> {
                 Content(
                     text = stringResource(R.string.permission_declined),
                     buttonResId = R.string.button_open_settings,
                     paddingValues = paddingValues,
-                    onClick = {
-                        settingsLauncher.launch(
-                            Intent(
-                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", context.packageName, null)
-                            )
-                        )
-                    }
+                    onClick = permissionHandler.launchPermissionDialog
                 )
             }
-            SinglePermissionState.Granted,
-            SinglePermissionState.Skipped -> {
+            PermissionState.Granted -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -161,7 +134,7 @@ private fun Preview() {
         contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
         Content(
-            text = stringResource(R.string.permission_never_asked, "Camera"),
+            text = stringResource(R.string.permission_show_message),
             buttonResId = R.string.button_grant_permission,
             paddingValues = PaddingValues(16.dp),
             onClick = {}

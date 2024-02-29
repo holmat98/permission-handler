@@ -6,7 +6,7 @@ object Plugins {
 
 object DefaultConfig {
     const val COMPILE_SDK = 34
-    const val MIN_SDK = 27
+    const val MIN_SDK = 26
     const val TARGET_SDK = 34
     const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
     const val CONSUMER_RULES_FILE = "consumer-rules.pro"
@@ -53,18 +53,6 @@ object AndroidX {
         const val UI_TOOLING = "androidx.compose.ui:ui-tooling:$composeVersion"
         const val NAVIGATION = "androidx.navigation:navigation-compose:2.7.3"
         const val TEST_MANIFEST = "androidx.compose.ui:ui-test-manifest:$composeVersion"
-
-        object Hilt {
-            private const val version = "1.0.0"
-
-            const val DEPENDENCY = "androidx.hilt:hilt-navigation-compose:$version"
-        }
-
-        object Lifecycle {
-            private const val version = "2.6.2"
-
-            const val DEPENDENCY = "androidx.lifecycle:lifecycle-runtime-compose:$version"
-        }
     }
 }
 

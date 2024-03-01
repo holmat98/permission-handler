@@ -10,7 +10,8 @@ android.configure(
 
 dependencies {
     coreKtx()
-    compose()
+    implementation(AndroidX.Compose.UI)
+    implementation(AndroidX.ActivityCompose.DEPENDENCY)
     unitTesting()
 }
 

@@ -29,7 +29,6 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Testing.AssertJ.DEPENDENCY)
     testImplementation(AndroidX.CoreKtx.Testing.DEPENDENCY)
     testImplementation(Testing.Mockk.DEPENDENCY)
-    testImplementation(Testing.Turbine.DEPENDENCY)
 }
 
 fun DependencyHandler.module(name: String) {

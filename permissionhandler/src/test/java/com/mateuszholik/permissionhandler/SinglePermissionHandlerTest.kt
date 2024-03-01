@@ -1,16 +1,16 @@
 package com.mateuszholik.permissionhandler
 
-import android.content.Context
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import app.cash.turbine.test
+import com.mateuszholik.permissionhandler.manager.PermissionManager
+import com.mateuszholik.permissionhandler.manager.PermissionManagerImpl
 import com.mateuszholik.permissionhandler.models.Permission
+import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.State
-import com.mateuszholik.permissionhandler.models.SinglePermissionState
 import com.mateuszholik.permissionhandler.providers.SdkProvider
 import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
-import org.assertj.core.api.Assertions.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -18,21 +18,18 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.assertThrows
 
 internal class SinglePermissionHandlerTest {
 
-    private val context = mockk<Context>()
+    private val activity = mockk<Activity>()
     private val permissionsPreferenceAssistant =
         mockk<PermissionsPreferenceAssistant>(relaxed = true)
 
-    private lateinit var permissionHandler: SinglePermissionHandler
+    private lateinit var permissionManager: PermissionManager
 
     @BeforeEach
     fun setUp() {
@@ -46,321 +43,254 @@ internal class SinglePermissionHandlerTest {
         unmockkObject(SdkProvider)
     }
 
-    @TestFactory
-    fun testInitialState() =
-        listOf(
-            State.NOT_ASKED to SinglePermissionState.AskForPermission(PERMISSION.name),
-            State.SKIPPED to SinglePermissionState.ShowRationale(PERMISSION.name),
-            State.SHOW_RATIONALE to SinglePermissionState.ShowRationale(PERMISSION.name),
-            State.DENIED to SinglePermissionState.Denied,
-        ).map { (permissionState, expectedResult) ->
-            dynamicTest("When saved permission state is equal to $permissionState then the initial state is equal to $expectedResult") {
-                runTest {
-                    initializePermissionHandler(savedState = permissionState)
+    @Test
+    fun `When saved permission state is GRANTED and ContextCompat returns PERMISSION_GRANTED then the initial state is equal to Granted`() {
+        mockkContextCompat(isGranted = true)
+        initializePermissionManager(savedState = State.GRANTED)
 
-                    permissionHandler.observe().test {
-                        assertThat(awaitItem()).isEqualTo(expectedResult)
-                    }
-                }
-            }
-        }
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Granted)
+    }
 
     @Test
-    fun `When saved permission state is GRANTED then the initial state is equal to Granted`() =
-        runTest {
-            mockkContextCompat(isGranted = true)
-            initializePermissionHandler(savedState = State.GRANTED)
+    fun `When saved permission state is GRANTED and ContextCompat returns PERMISSION_DENIED then the initial state is equal to ShowRationale`() {
+        mockkContextCompat(isGranted = false)
+        initializePermissionManager(savedState = State.GRANTED)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
-            }
+        val initialState = permissionManager.initialState
 
-            verify(exactly = 0) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.SHOW_RATIONALE
-                )
-            }
-        }
+        assertThat(initialState).isEqualTo(PermissionState.ShowRationale)
+    }
 
     @Test
-    fun `When saved permission state is GRANTED and permission was removed in settings then the initial state is equal to ShowRationale`() =
-        runTest {
-            mockkContextCompat(isGranted = false)
-            initializePermissionHandler(savedState = State.GRANTED)
+    fun `When Android version is lower than min sdk for the permission then initial state is equal to Granted`() {
+        initializePermissionManager(
+            permission = PERMISSION.copy(minSdk = 33),
+            androidSdkVersion = 32
+        )
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.ShowRationale(PERMISSION.name))
-            }
+        val initialState = permissionManager.initialState
 
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.SHOW_RATIONALE
-                )
-            }
-        }
+        assertThat(initialState).isEqualTo(PermissionState.Granted)
+    }
 
     @Test
-    fun `When Android version is lower than min sdk for the permission then initial state is equal to Granted`() =
-        runTest {
-            initializePermissionHandler(
-                permission = PERMISSION.copy(minSdk = 33),
-                androidSdkVersion = 32
+    fun `When saved permission state is NOT_ASKED then the initial state is equal to AskForPermission`() {
+        initializePermissionManager(savedState = State.NOT_ASKED)
+
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.AskForPermission)
+    }
+
+    @Test
+    fun `When saved permission state is SHOW_RATIONALE then the initial state is equal to ShowRationale`() {
+        mockkActivityShouldShowRationale(shouldShow = true)
+        initializePermissionManager(savedState = State.SHOW_RATIONALE)
+
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.ShowRationale)
+    }
+
+    @Test
+    fun `When saved permission state is SHOW_RATIONALE and activity should show rationale returns false then the initial state is equal to Denied`() {
+        mockkActivityShouldShowRationale(shouldShow = false)
+        initializePermissionManager(savedState = State.SHOW_RATIONALE)
+
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Denied)
+    }
+
+    @Test
+    fun `When saved permission state is DENIED then the initial state is equal to Denied`() {
+        initializePermissionManager(savedState = State.DENIED)
+
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Denied)
+    }
+
+    @Test
+    fun `When permission was denied by the user then ShowRationale is the current state`() {
+        initializePermissionManager()
+        mockkActivityShouldShowRationale(shouldShow = true)
+
+        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
+
+        assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.SHOW_RATIONALE
             )
-
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
-            }
         }
+    }
 
     @Test
-    fun `When permission is optional and it was denied by the user then Skipped is the current state`() =
-        runTest {
-            initializePermissionHandler(permission = PERMISSION.copy(isOptional = true))
+    fun `When permission was denied by the user and activity should show rationale returns false then Denied is the current state`() {
+        initializePermissionManager()
+        mockkActivityShouldShowRationale(shouldShow = false)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.AskForPermission(
-                        PERMISSION.name
-                    )
-                )
+        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
 
-                permissionHandler.handlePermissionResult(isGranted = false)
-
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Skipped)
-            }
-
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.SKIPPED
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.DENIED
+            )
         }
+    }
 
     @Test
-    fun `When permission was denied by the user then ShowRationale is the current state`() =
-        runTest {
-            initializePermissionHandler()
+    fun `When permission was granted by the user then Granted is the current state`() {
+        initializePermissionManager()
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.AskForPermission(
-                        PERMISSION.name
-                    )
-                )
+        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = true)
 
-                permissionHandler.handlePermissionResult(isGranted = false)
-
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.ShowRationale(
-                        PERMISSION.name
-                    )
-                )
-            }
-
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.SHOW_RATIONALE
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.GRANTED
+            )
         }
+    }
 
     @Test
-    fun `When permission was granted by the user then Granted is the current state`() =
-        runTest {
-            initializePermissionHandler()
+    fun `When current state is ShowRationale and permission was denied by the user then Denied is the current state`() {
+        mockkActivityShouldShowRationale(shouldShow = true)
+        initializePermissionManager(savedState = State.SHOW_RATIONALE)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.AskForPermission(
-                        PERMISSION.name
-                    )
-                )
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.ShowRationale)
 
-                permissionHandler.handlePermissionResult(isGranted = true)
+        mockkActivityShouldShowRationale(shouldShow = false)
 
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
-            }
+        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
 
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.GRANTED
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.DENIED
+            )
         }
+    }
 
     @Test
-    fun `When current state is ShowRationale and permission was denied then Denied is the current state`() =
-        runTest {
-            initializePermissionHandler(savedState = State.SHOW_RATIONALE)
+    fun `When current state is ShowRationale and permission was granted by the user then Granted is the current state`() {
+        mockkActivityShouldShowRationale(shouldShow = true)
+        initializePermissionManager(savedState = State.SHOW_RATIONALE)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.ShowRationale(
-                        PERMISSION.name
-                    )
-                )
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.ShowRationale)
 
-                permissionHandler.handlePermissionResult(isGranted = false)
+        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = true)
 
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
-            }
-
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.DENIED
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.GRANTED
+            )
         }
+    }
 
     @Test
-    fun `When current state is ShowRationale and permission was granted then Granted is the current state`() =
-        runTest {
-            initializePermissionHandler(savedState = State.SHOW_RATIONALE)
+    fun `When current state is Denied and permission was granted in the settings then Granted is the current state`() {
+        initializePermissionManager(savedState = State.DENIED)
+        mockkContextCompat(isGranted = true)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.ShowRationale(
-                        PERMISSION.name
-                    )
-                )
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.Denied)
 
-                permissionHandler.handlePermissionResult(isGranted = true)
+        val nextPermissionState = permissionManager.handleBackFromSettings()
 
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
-            }
-
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.GRANTED
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.GRANTED
+            )
         }
+    }
 
     @Test
-    fun `When current state is Denied and permission was granted in the settings then Granted is the current state`() =
-        runTest {
-            mockkContextCompat(isGranted = true)
-            initializePermissionHandler(savedState = State.DENIED)
+    fun `When current state is Denied and activity should show rationale returns true then ShowRationale is the current state`() {
+        initializePermissionManager(savedState = State.DENIED)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.Denied
-                )
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.Denied)
 
-                permissionHandler.handleBackFromSettings()
+        mockkActivityShouldShowRationale(shouldShow = true)
+        mockkContextCompat(isGranted = false)
 
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Granted)
-            }
+        val nextPermissionState = permissionManager.handleBackFromSettings()
 
-            verify(exactly = 1) {
-                permissionsPreferenceAssistant.savePermissionState(
-                    PERMISSION.name,
-                    State.GRANTED
-                )
-            }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
+        verify(exactly = 1) {
+            permissionsPreferenceAssistant.saveState(
+                PERMISSION.name,
+                State.SHOW_RATIONALE
+            )
         }
+    }
 
     @Test
-    fun `When current state is Denied and permission was not granted in the settings then Denied is the current state`() =
-        runTest {
-            mockkContextCompat(isGranted = false)
+    fun `When current state is Denied and permission was not granted in the settings then Denied is the current state`() {
+        initializePermissionManager(savedState = State.DENIED)
+        mockkContextCompat(isGranted = true)
 
-            initializePermissionHandler(savedState = State.DENIED)
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.Denied)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.Denied
-                )
+        mockkActivityShouldShowRationale(shouldShow = false)
+        mockkContextCompat(isGranted = false)
 
-                permissionHandler.handleBackFromSettings()
+        val nextPermissionState = permissionManager.handleBackFromSettings()
 
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
-            }
-
-            verify(exactly = 0) {
-                permissionsPreferenceAssistant.savePermissionState(PERMISSION.name, any())
-            }
-        }
+        assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
+    }
 
     @Test
-    fun `SinglePermissionHandler handles correctly the whole flow of the permission granting process`() =
-        runTest {
-            mockkContextCompat(isGranted = true)
-            initializePermissionHandler()
+    fun `PermissionManager handles correctly the whole flow of the permission granting process`() {
+        initializePermissionManager()
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.AskForPermission(PERMISSION.name)
-                )
+        assertThat(permissionManager.initialState).isEqualTo(PermissionState.AskForPermission)
 
-                permissionHandler.handlePermissionResult(false)
+        mockkActivityShouldShowRationale(shouldShow = true)
 
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.ShowRationale(PERMISSION.name)
-                )
+        assertThat(
+            permissionManager.handlePermissionResult(isGranted = false)
+        ).isEqualTo(PermissionState.ShowRationale)
 
-                permissionHandler.handlePermissionResult(false)
+        verify { permissionsPreferenceAssistant.saveState(PERMISSION.name, State.SHOW_RATIONALE) }
 
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.Denied
-                )
+        mockkActivityShouldShowRationale(shouldShow = false)
 
-                permissionHandler.handleBackFromSettings()
+        assertThat(
+            permissionManager.handlePermissionResult(isGranted = false)
+        ).isEqualTo(PermissionState.Denied)
 
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.Granted
-                )
-            }
-        }
+        verify { permissionsPreferenceAssistant.saveState(PERMISSION.name, State.DENIED) }
 
-    @Test
-    fun `When handleBackFromSettings is called when current state is different than Denied then IllegalStateException is thrown`() =
-        runTest {
-            initializePermissionHandler()
+        mockkContextCompat(isGranted = true)
 
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(
-                    SinglePermissionState.AskForPermission(
-                        PERMISSION.name
-                    )
-                )
+        assertThat(
+            permissionManager.handleBackFromSettings()
+        ).isEqualTo(PermissionState.Granted)
 
-                assertThrows<IllegalStateException> {
-                    permissionHandler.handleBackFromSettings()
-                }
-            }
-        }
+        verify { permissionsPreferenceAssistant.saveState(PERMISSION.name, State.GRANTED) }
+    }
 
-    @Test
-    fun `When handlePermissionResult is called when current state is different than AskForPermission or ShowRationale then IllegalStateException is thrown`() =
-        runTest {
-            initializePermissionHandler(savedState = State.DENIED)
-
-            permissionHandler.observe().test {
-                assertThat(awaitItem()).isEqualTo(SinglePermissionState.Denied)
-
-                assertThrows<IllegalStateException> {
-                    permissionHandler.handlePermissionResult(isGranted = false)
-                }
-            }
-        }
-
-    private fun initializePermissionHandler(
+    private fun initializePermissionManager(
         permission: Permission = PERMISSION,
         savedState: State = State.NOT_ASKED,
         androidSdkVersion: Int = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
     ) {
         every { SdkProvider.provide() } returns androidSdkVersion
-        every { permissionsPreferenceAssistant.getPermissionState(PERMISSION.name) } returns savedState
-        permissionHandler = SinglePermissionHandlerImpl(
-            context = context,
+        every { permissionsPreferenceAssistant.getState(PERMISSION.name) } returns savedState
+        permissionManager = PermissionManagerImpl(
+            activity = activity,
             permissionsPreferenceAssistant = permissionsPreferenceAssistant,
             permission = permission
         )
@@ -372,13 +302,18 @@ internal class SinglePermissionHandlerTest {
         } else {
             PackageManager.PERMISSION_DENIED
         }
-        every { ContextCompat.checkSelfPermission(context, PERMISSION.name) } returns result
+        every { ContextCompat.checkSelfPermission(activity, PERMISSION.name) } returns result
+    }
+
+    private fun mockkActivityShouldShowRationale(shouldShow: Boolean) {
+        every {
+            activity.shouldShowRequestPermissionRationale(PERMISSION.name)
+        } returns shouldShow
     }
 
     private companion object {
         val PERMISSION = Permission(
             name = "permission_name",
-            isOptional = false,
             minSdk = 1
         )
     }

@@ -44,7 +44,6 @@ internal class PermissionManagerImpl(
 
     override val initialState: PermissionState =
         if (SdkProvider.provide() < permission.minSdk) {
-            state = State.GRANTED
             PermissionState.Granted
         } else {
             when (state) {

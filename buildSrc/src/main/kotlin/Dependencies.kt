@@ -73,20 +73,10 @@ object Testing {
         const val DEPENDENCY = "org.assertj:assertj-core:$version"
     }
 
-    object Turbine {
-        private const val version = "1.0.0"
-
-        const val DEPENDENCY = "app.cash.turbine:turbine:$version"
-    }
-
     object Mockk {
         private const val version = "1.13.5"
 
         const val DEPENDENCY = "io.mockk:mockk:$version"
-
-        object Android {
-            const val DEPENDENCY = "io.mockk:mockk-android:$version"
-        }
     }
 }
 

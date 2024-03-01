@@ -1,8 +1,6 @@
 plugins {
     id(Plugins.ANDROID_APPLICATION)
     id(Plugins.ANDROID_KOTLIN)
-    id(Google.KSP.PLUGIN)
-    id(Plugins.HILT)
     id(AndroidGitVersion.PLUGIN)
 }
 
@@ -28,5 +26,4 @@ dependencies {
     lifecycle()
     activity()
     compose()
-    hilt()
 }

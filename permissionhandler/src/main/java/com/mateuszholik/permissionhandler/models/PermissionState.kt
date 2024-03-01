@@ -1,9 +1,12 @@
 package com.mateuszholik.permissionhandler.models
 
-internal enum class PermissionState {
-    NOT_ASKED,
-    SHOW_RATIONALE,
-    DENIED,
-    SKIPPED,
-    GRANTED
+sealed class PermissionState {
+
+    data object AskForPermission : PermissionState()
+
+    data object ShowRationale : PermissionState()
+
+    data object Denied : PermissionState()
+
+    data object Granted : PermissionState()
 }

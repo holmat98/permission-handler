@@ -12,11 +12,6 @@ fun DependencyHandler.activity() {
     implementation(AndroidX.ActivityCompose.DEPENDENCY)
 }
 
-fun DependencyHandler.hilt() {
-    implementation(Google.Hilt.DEPENDENCY)
-    ksp(Google.Hilt.Compiler.DEPENDENCY)
-}
-
 fun DependencyHandler.compose() {
     implementation(AndroidX.Compose.UI)
     implementation(AndroidX.Compose.MATERIAL)
@@ -24,8 +19,6 @@ fun DependencyHandler.compose() {
     implementation(AndroidX.Compose.NAVIGATION)
     debugImplementation(AndroidX.Compose.UI_TOOLING)
     debugImplementation(AndroidX.Compose.TEST_MANIFEST)
-    implementation(AndroidX.Compose.Hilt.DEPENDENCY)
-    implementation(AndroidX.Compose.Lifecycle.DEPENDENCY)
 }
 
 fun DependencyHandler.unitTesting() {
@@ -36,7 +29,6 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Testing.AssertJ.DEPENDENCY)
     testImplementation(AndroidX.CoreKtx.Testing.DEPENDENCY)
     testImplementation(Testing.Mockk.DEPENDENCY)
-    testImplementation(Testing.Turbine.DEPENDENCY)
 }
 
 fun DependencyHandler.module(name: String) {

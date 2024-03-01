@@ -53,19 +53,24 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
             PermissionHandler(
                 currentPermissionState = state,
                 launchPermissionDialog = {
-                    if (state is PermissionState.Denied) {
-                        settingsLauncher.launch(
-                            Intent(
-                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts(
-                                    "package",
-                                    activity.applicationContext.packageName,
-                                    null
+                    when (state) {
+                        PermissionState.AskForPermission,
+                        PermissionState.ShowRationale -> {
+                            permissionLauncher.launch(permission.name)
+                        }
+                        PermissionState.Denied -> {
+                            settingsLauncher.launch(
+                                Intent(
+                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.fromParts(
+                                        "package",
+                                        activity.applicationContext.packageName,
+                                        null
+                                    )
                                 )
                             )
-                        )
-                    } else {
-                        permissionLauncher.launch(permission.name)
+                        }
+                        PermissionState.Granted -> Unit
                     }
                 }
             )

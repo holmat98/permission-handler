@@ -54,13 +54,13 @@ internal class SinglePermissionHandlerTest {
     }
 
     @Test
-    fun `When saved permission state is GRANTED and ContextCompat returns PERMISSION_DENIED then the initial state is equal to ShowRationale`() {
+    fun `When saved permission state is GRANTED and ContextCompat returns PERMISSION_DENIED then the initial state is equal to AskForPermission`() {
         mockkContextCompat(isGranted = false)
         initializePermissionManager(savedState = State.GRANTED)
 
         val initialState = permissionManager.initialState
 
-        assertThat(initialState).isEqualTo(PermissionState.ShowRationale)
+        assertThat(initialState).isEqualTo(PermissionState.AskForPermission)
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class SinglePermissionHandlerTest {
         initializePermissionManager()
         mockkActivityShouldShowRationale(shouldShow = true)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
+        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
         verify(exactly = 1) {
@@ -134,7 +134,7 @@ internal class SinglePermissionHandlerTest {
         initializePermissionManager()
         mockkActivityShouldShowRationale(shouldShow = false)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
+        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
         verify(exactly = 1) {
@@ -149,7 +149,7 @@ internal class SinglePermissionHandlerTest {
     fun `When permission was granted by the user then Granted is the current state`() {
         initializePermissionManager()
 
-        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = true)
+        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to true))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
         verify(exactly = 1) {
@@ -169,7 +169,7 @@ internal class SinglePermissionHandlerTest {
 
         mockkActivityShouldShowRationale(shouldShow = false)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = false)
+        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
         verify(exactly = 1) {
@@ -187,7 +187,7 @@ internal class SinglePermissionHandlerTest {
 
         assertThat(permissionManager.initialState).isEqualTo(PermissionState.ShowRationale)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(isGranted = true)
+        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to true))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
         verify(exactly = 1) {
@@ -260,7 +260,7 @@ internal class SinglePermissionHandlerTest {
         mockkActivityShouldShowRationale(shouldShow = true)
 
         assertThat(
-            permissionManager.handlePermissionResult(isGranted = false)
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
         ).isEqualTo(PermissionState.ShowRationale)
 
         verify { permissionsPreferenceAssistant.saveState(PERMISSION.name, State.SHOW_RATIONALE) }
@@ -268,7 +268,7 @@ internal class SinglePermissionHandlerTest {
         mockkActivityShouldShowRationale(shouldShow = false)
 
         assertThat(
-            permissionManager.handlePermissionResult(isGranted = false)
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
         ).isEqualTo(PermissionState.Denied)
 
         verify { permissionsPreferenceAssistant.saveState(PERMISSION.name, State.DENIED) }
@@ -312,7 +312,7 @@ internal class SinglePermissionHandlerTest {
     }
 
     private companion object {
-        val PERMISSION = Permission(
+        val PERMISSION = Permission.Single(
             name = "permission_name",
             minSdk = 1
         )

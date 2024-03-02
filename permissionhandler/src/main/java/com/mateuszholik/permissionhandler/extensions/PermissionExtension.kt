@@ -8,4 +8,6 @@ import com.mateuszholik.permissionhandler.models.Permission
 
 @SuppressLint("ObsoleteSdkInt")
 internal fun Permission.isGranted(context: Context): Boolean =
-    ContextCompat.checkSelfPermission(context, name) == PackageManager.PERMISSION_GRANTED
+    permissions.all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+    }

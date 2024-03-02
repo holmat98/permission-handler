@@ -39,7 +39,7 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
     var state by remember { mutableStateOf(permissionManager.initialState) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
         state = permissionManager.handlePermissionResult(result)
     }
@@ -56,7 +56,7 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                     when (state) {
                         PermissionState.AskForPermission,
                         PermissionState.ShowRationale -> {
-                            permissionLauncher.launch(permission.name)
+                            permissionLauncher.launch(permission.permissions.toTypedArray())
                         }
                         PermissionState.Denied -> {
                             settingsLauncher.launch(

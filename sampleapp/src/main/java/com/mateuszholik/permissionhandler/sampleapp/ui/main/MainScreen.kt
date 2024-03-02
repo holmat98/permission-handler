@@ -27,6 +27,7 @@ import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.Comm
 @Composable
 fun MainScreen(
     onCameraPermissionPressed: () -> Unit,
+    onLocationPermissionPressed: () -> Unit,
 ) {
     Scaffold {
         Column(
@@ -70,7 +71,14 @@ fun MainScreen(
                     .padding(bottom = 16.dp)
                     .fillMaxWidth(),
                 textResId = R.string.permission_camera,
-                onClick = onCameraPermissionPressed
+                onClick = onCameraPermissionPressed,
+            )
+            CommonButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(),
+                textResId = R.string.permission_location,
+                onClick = onLocationPermissionPressed,
             )
         }
     }
@@ -86,6 +94,7 @@ private fun Preview() {
         ) {
             MainScreen(
                 onCameraPermissionPressed = {},
+                onLocationPermissionPressed = {},
             )
         }
     }

@@ -1,9 +1,7 @@
 package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
-import com.mateuszholik.permissionhandler.extensions.isGranted
 import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
-import com.mateuszholik.permissionhandler.extensions.shouldShowRationale
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.State
@@ -32,7 +30,7 @@ internal interface PermissionManager {
 }
 
 internal class PermissionManagerImpl(
-    private val permission: Permission,
+    permission: Permission,
     private val permissionsPreferenceAssistant: PermissionsPreferenceAssistant,
     private val activity: Activity,
 ) : PermissionManager {
@@ -68,22 +66,25 @@ internal class PermissionManagerImpl(
         }
     }
 
-    override fun handleBackFromSettings(): PermissionState =
-        when {
-            permission.isGranted(activity) -> {
-                permission.permissions.forEach {
-                    permissionsPreferenceAssistant.saveState(it, State.GRANTED)
-                }
-                PermissionState.Granted
+    override fun handleBackFromSettings(): PermissionState {
+        states.forEach { (permissionName, state) ->
+            val nextState = state.getNextState(
+                permissionName = permissionName,
+                isGranted = activity.isPermissionGranted(permissionName),
+            )
+            if (state != nextState) {
+                permissionsPreferenceAssistant.saveState(permissionName, nextState)
+                states[permissionName] = nextState
             }
-            activity.shouldShowRationale(permission) -> {
-                permission.permissions.forEach {
-                    permissionsPreferenceAssistant.saveState(it, State.SHOW_RATIONALE)
-                }
-                PermissionState.ShowRationale
-            }
-            else -> PermissionState.Denied
         }
+
+        return when {
+            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
+            states.containsValue(State.DENIED) -> PermissionState.Denied
+            else -> PermissionState.Granted
+        }
+    }
+
 
     private fun getInitialStateFor(permissionName: String): State =
         when (permissionsPreferenceAssistant.getState(permissionName)) {
@@ -108,7 +109,7 @@ internal class PermissionManagerImpl(
     private fun State.getNextState(permissionName: String, isGranted: Boolean): State =
         when {
             isGranted -> State.GRANTED
-            this == State.NOT_ASKED && activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
+            this == State.NOT_ASKED || activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
             else -> State.DENIED
         }
 }

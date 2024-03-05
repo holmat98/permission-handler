@@ -23,7 +23,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class SinglePermissionHandlerTest {
+internal class PermissionManagerTest {
 
     private val activity = mockk<Activity>()
     private val permissionsPreferenceAssistant =
@@ -130,17 +130,17 @@ internal class SinglePermissionHandlerTest {
     }
 
     @Test
-    fun `When permission was denied by the user and activity should show rationale returns false then Denied is the current state`() {
+    fun `When permission was denied by the user and NOT_ASKED is current saved state then ShowRationale is the current state`() {
         initializePermissionManager()
         mockkActivityShouldShowRationale(shouldShow = false)
 
         val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION.name to false))
 
-        assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
+        assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION.name,
-                State.DENIED
+                State.SHOW_RATIONALE
             )
         }
     }

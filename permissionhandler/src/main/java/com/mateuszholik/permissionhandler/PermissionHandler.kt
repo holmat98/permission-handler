@@ -1,6 +1,5 @@
 package com.mateuszholik.permissionhandler
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -15,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.mateuszholik.permissionhandler.extensions.activity
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
@@ -27,7 +27,7 @@ data class PermissionHandler(
 
 @Composable
 fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> {
-    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current.activity
 
     val permissionManager = remember {
         PermissionManager.newInstance(

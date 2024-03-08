@@ -15,16 +15,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.mateuszholik.permissionhandler.extensions.activity
+import com.mateuszholik.permissionhandler.extensions.permissions
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 
+/**
+ * Holder of the state of the permission and lambda to launch permission system dialog.
+ *
+ * @property currentPermissionState current permission state
+ * @property launchPermissionDialog launches permission dialog or system settings
+ */
 @Immutable
-data class PermissionHandler(
+data class PermissionHandler internal constructor(
     val currentPermissionState: PermissionState,
     val launchPermissionDialog: () -> Unit,
 )
 
+/**
+ * Provides current [PermissionState] of the permission. Launches the permission system dialog
+ * or navigates to the system settings when current state is equal to [Denied][com.mateuszholik.permissionhandler.models.PermissionState.Denied].
+ *
+ * @param permission permission for which the flow is handled
+ * @return [PermissionHandler]
+ */
 @Composable
 fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> {
     val activity = LocalContext.current.activity

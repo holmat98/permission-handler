@@ -28,7 +28,7 @@ fun LocationPermissionScreen(
 ) {
     val permissionHandler by rememberPermissionHandler(
         permission = Permission.Coupled(
-            permissions = listOf(
+            names = listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
             ),

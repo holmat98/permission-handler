@@ -2,6 +2,7 @@ package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
 import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
+import com.mateuszholik.permissionhandler.extensions.permissions
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.State
@@ -35,12 +36,13 @@ internal class PermissionManagerImpl(
     private val activity: Activity,
 ) : PermissionManager {
 
-    private val states: MutableMap<String, State> =
+    private val states: MutableMap<String, State> by lazy {
         permission.permissions
             .associateWith { getInitialStateFor(it) }
             .toMutableMap()
+    }
 
-    override val initialState: PermissionState =
+    override val initialState: PermissionState by lazy {
         when {
             SdkProvider.provide() < permission.minSdk -> PermissionState.Granted
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
@@ -48,6 +50,7 @@ internal class PermissionManagerImpl(
             states.containsValue(State.DENIED) -> PermissionState.Denied
             else -> PermissionState.Granted
         }
+    }
 
     override fun handlePermissionResult(result: Map<String, Boolean>): PermissionState {
         result.forEach { (permissionName, isGranted) ->
@@ -85,7 +88,6 @@ internal class PermissionManagerImpl(
         }
     }
 
-
     private fun getInitialStateFor(permissionName: String): State =
         when (permissionsPreferenceAssistant.getState(permissionName)) {
             State.NOT_ASKED -> State.NOT_ASKED
@@ -109,7 +111,8 @@ internal class PermissionManagerImpl(
     private fun State.getNextState(permissionName: String, isGranted: Boolean): State =
         when {
             isGranted -> State.GRANTED
-            this == State.NOT_ASKED || activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
+            this == State.NOT_ASKED ||
+                    activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
             else -> State.DENIED
         }
 }

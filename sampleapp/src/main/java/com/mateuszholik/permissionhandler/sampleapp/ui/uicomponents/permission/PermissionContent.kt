@@ -10,19 +10,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.TitleText
 
 @Composable
 fun PermissionContent(
@@ -49,21 +51,14 @@ fun PermissionContent(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary
             )
-            Text(
-                text = permissionName,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-            Text(
+            HeaderText(text = permissionName)
+            TitleText(
                 modifier = Modifier.padding(vertical = 8.dp),
-                fontSize = 28.sp,
-                text = "Current state:",
+                text = stringResource(R.string.current_state),
             )
-            Text(
+            CommonText(
                 text = permissionState::class.java.simpleName,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
             )
         }
 

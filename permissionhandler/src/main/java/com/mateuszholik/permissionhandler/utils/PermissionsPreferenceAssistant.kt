@@ -11,7 +11,7 @@ internal interface PermissionsPreferenceAssistant {
     fun getState(permissionName: String): State
 
     companion object {
-        internal fun newInstance(context: Context): PermissionsPreferenceAssistant =
+        fun newInstance(context: Context): PermissionsPreferenceAssistant =
             PermissionPreferenceAssistantImpl(context)
     }
 }
@@ -37,6 +37,6 @@ internal class PermissionPreferenceAssistantImpl(
         } ?: State.NOT_ASKED
 
     private companion object {
-        const val SHARED_PREFS_FILE_NAME = "permissions_preferences"
+        const val SHARED_PREFS_FILE_NAME = "permission_handler_preferences"
     }
 }

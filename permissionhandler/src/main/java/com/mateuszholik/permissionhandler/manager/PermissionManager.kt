@@ -1,19 +1,19 @@
 package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
-import com.mateuszholik.permissionhandler.extensions.isGranted
-import com.mateuszholik.permissionhandler.extensions.shouldShowRationale
+import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
+import com.mateuszholik.permissionhandler.extensions.permissions
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.State
 import com.mateuszholik.permissionhandler.providers.SdkProvider
 import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
 
-interface PermissionManager {
+internal interface PermissionManager {
 
-    val initialState : PermissionState
+    val initialState: PermissionState
 
-    fun handlePermissionResult(isGranted: Boolean): PermissionState
+    fun handlePermissionResult(result: Map<String, Boolean>): PermissionState
 
     fun handleBackFromSettings(): PermissionState
 
@@ -31,67 +31,88 @@ interface PermissionManager {
 }
 
 internal class PermissionManagerImpl(
-    private val permission: Permission,
+    permission: Permission,
     private val permissionsPreferenceAssistant: PermissionsPreferenceAssistant,
     private val activity: Activity,
 ) : PermissionManager {
 
-    private var state: State = permissionsPreferenceAssistant.getState(permission.name)
-        set(value) {
-            permissionsPreferenceAssistant.saveState(permission.name, value)
-            field = value
-        }
+    private val states: MutableMap<String, State> by lazy {
+        permission.permissions
+            .associateWith { getInitialStateFor(it) }
+            .toMutableMap()
+    }
 
-    override val initialState: PermissionState =
-        if (SdkProvider.provide() < permission.minSdk) {
-            PermissionState.Granted
-        } else {
-            when (state) {
-                State.NOT_ASKED -> PermissionState.AskForPermission
-                State.SHOW_RATIONALE -> {
-                    if (activity.shouldShowRationale(permission)) {
-                        PermissionState.ShowRationale
-                    } else {
-                        state = State.DENIED
-                        PermissionState.Denied
-                    }
-                }
-                State.DENIED -> PermissionState.Denied
-                State.GRANTED -> {
-                    if (permission.isGranted(activity)) {
-                        PermissionState.Granted
-                    } else {
-                        PermissionState.ShowRationale
-                    }
-                }
-            }
-        }
-
-    override fun handlePermissionResult(isGranted: Boolean): PermissionState {
-        state = when {
-            isGranted -> State.GRANTED
-            state == State.NOT_ASKED && activity.shouldShowRationale(permission) -> State.SHOW_RATIONALE
-            else -> State.DENIED
-        }
-
-        return when (state) {
-            State.GRANTED -> PermissionState.Granted
-            State.SHOW_RATIONALE -> PermissionState.ShowRationale
-            State.DENIED -> PermissionState.Denied
-            State.NOT_ASKED -> PermissionState.AskForPermission
+    override val initialState: PermissionState by lazy {
+        when {
+            SdkProvider.provide() < permission.minSdk -> PermissionState.Granted
+            states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
+            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
+            states.containsValue(State.DENIED) -> PermissionState.Denied
+            else -> PermissionState.Granted
         }
     }
 
-    override fun handleBackFromSettings(): PermissionState =
+    override fun handlePermissionResult(result: Map<String, Boolean>): PermissionState {
+        result.forEach { (permissionName, isGranted) ->
+            states[permissionName]?.let { currentState ->
+                val nextState = currentState.getNextState(permissionName, isGranted)
+                permissionsPreferenceAssistant.saveState(permissionName, nextState)
+                states[permissionName] = nextState
+            }
+        }
+
+        return when {
+            states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
+            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
+            states.containsValue(State.DENIED) -> PermissionState.Denied
+            else -> PermissionState.Granted
+        }
+    }
+
+    override fun handleBackFromSettings(): PermissionState {
+        states.forEach { (permissionName, state) ->
+            val nextState = state.getNextState(
+                permissionName = permissionName,
+                isGranted = activity.isPermissionGranted(permissionName),
+            )
+            if (state != nextState) {
+                permissionsPreferenceAssistant.saveState(permissionName, nextState)
+                states[permissionName] = nextState
+            }
+        }
+
+        return when {
+            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
+            states.containsValue(State.DENIED) -> PermissionState.Denied
+            else -> PermissionState.Granted
+        }
+    }
+
+    private fun getInitialStateFor(permissionName: String): State =
+        when (permissionsPreferenceAssistant.getState(permissionName)) {
+            State.NOT_ASKED -> State.NOT_ASKED
+            State.SHOW_RATIONALE -> {
+                if (activity.shouldShowRequestPermissionRationale(permissionName)) {
+                    State.SHOW_RATIONALE
+                } else {
+                    State.DENIED
+                }
+            }
+            State.DENIED -> State.DENIED
+            State.GRANTED -> {
+                if (activity.isPermissionGranted(permissionName)) {
+                    State.GRANTED
+                } else {
+                    State.NOT_ASKED
+                }
+            }
+        }
+
+    private fun State.getNextState(permissionName: String, isGranted: Boolean): State =
         when {
-            permission.isGranted(activity) -> {
-                state = State.GRANTED
-                PermissionState.Granted
-            }
-            activity.shouldShowRationale(permission) -> {
-                state = State.SHOW_RATIONALE
-                PermissionState.ShowRationale
-            }
-            else -> PermissionState.Denied
+            isGranted -> State.GRANTED
+            this == State.NOT_ASKED ||
+                    activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
+            else -> State.DENIED
         }
 }

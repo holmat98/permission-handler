@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.camera
+package com.mateuszholik.permissionhandler.sampleapp.ui.location
 
 import android.Manifest
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,12 +23,15 @@ import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.permission.P
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraPermissionScreen(
+fun LocationPermissionScreen(
     onBackPressed: () -> Unit,
 ) {
     val permissionHandler by rememberPermissionHandler(
-        permission = Permission.Single(
-            name = Manifest.permission.CAMERA,
+        permission = Permission.Coupled(
+            names = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ),
             minSdk = 26
         )
     )
@@ -56,8 +59,8 @@ fun CameraPermissionScreen(
                     end = 16.dp,
                 )
                 .fillMaxSize(),
-            permissionName = stringResource(R.string.permission_camera).uppercase(),
-            permissionIconDrawable = R.drawable.ic_camera,
+            permissionName = stringResource(R.string.permission_location).uppercase(),
+            permissionIconDrawable = R.drawable.ic_location,
             permissionState = permissionHandler.currentPermissionState,
             onButtonPressed = permissionHandler.launchPermissionDialog
         )

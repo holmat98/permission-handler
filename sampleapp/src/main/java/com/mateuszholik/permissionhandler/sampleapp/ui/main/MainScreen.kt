@@ -9,7 +9,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,15 +17,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mateuszholik.permissionhandler.sampleapp.BuildConfig
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
 
 @Composable
 fun MainScreen(
     onCameraPermissionPressed: () -> Unit,
+    onLocationPermissionPressed: () -> Unit,
+    onNotificationPermissionPressed: () -> Unit,
 ) {
     Scaffold {
         Column(
@@ -52,16 +54,10 @@ fun MainScreen(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                 )
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-                Text(
+                HeaderText(text = stringResource(R.string.app_name))
+                CommonText(
                     text = BuildConfig.VERSION_NAME,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
                 )
             }
 
@@ -70,7 +66,21 @@ fun MainScreen(
                     .padding(bottom = 16.dp)
                     .fillMaxWidth(),
                 textResId = R.string.permission_camera,
-                onClick = onCameraPermissionPressed
+                onClick = onCameraPermissionPressed,
+            )
+            CommonButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(),
+                textResId = R.string.permission_location,
+                onClick = onLocationPermissionPressed,
+            )
+            CommonButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(),
+                textResId = R.string.permission_notification,
+                onClick = onNotificationPermissionPressed,
             )
         }
     }
@@ -86,6 +96,8 @@ private fun Preview() {
         ) {
             MainScreen(
                 onCameraPermissionPressed = {},
+                onLocationPermissionPressed = {},
+                onNotificationPermissionPressed = {},
             )
         }
     }

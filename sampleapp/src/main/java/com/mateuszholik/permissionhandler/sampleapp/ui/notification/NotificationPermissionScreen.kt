@@ -1,6 +1,7 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.camera
+package com.mateuszholik.permissionhandler.sampleapp.ui.notification
 
 import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,13 +24,13 @@ import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.permission.P
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraPermissionScreen(
+fun NotificationPermissionScreen(
     onBackPressed: () -> Unit,
 ) {
     val permissionHandler by rememberPermissionHandler(
         permission = Permission.Single(
-            name = Manifest.permission.CAMERA,
-            minSdk = 26
+            name = Manifest.permission.POST_NOTIFICATIONS,
+            minSdk = Build.VERSION_CODES.TIRAMISU
         )
     )
 
@@ -56,8 +57,8 @@ fun CameraPermissionScreen(
                     end = 16.dp,
                 )
                 .fillMaxSize(),
-            permissionName = stringResource(R.string.permission_camera).uppercase(),
-            permissionIconDrawable = R.drawable.ic_camera,
+            permissionName = stringResource(R.string.permission_notification).uppercase(),
+            permissionIconDrawable = R.drawable.ic_notification,
             permissionState = permissionHandler.currentPermissionState,
             onButtonPressed = permissionHandler.launchPermissionDialog
         )

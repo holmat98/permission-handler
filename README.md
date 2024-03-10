@@ -1,7 +1,7 @@
 # PermissionHandler
 
 <p align="center">
-<img src="app/src/main/ic_launcher-playstore.png" alt="App icon" width="256px" height="256px">
+<img src="sampleapp/src/main/ic_launcher-playstore.png" alt="App icon" width="256px" height="256px">
 </p>
 
 <b>Android library to handle permissions flow in applications that are created with jetpack compose.</b>

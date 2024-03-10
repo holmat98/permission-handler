@@ -27,10 +27,7 @@ fun CameraPermissionScreen(
     onBackPressed: () -> Unit,
 ) {
     val permissionHandler by rememberPermissionHandler(
-        permission = Permission.Single(
-            name = Manifest.permission.CAMERA,
-            minSdk = 26
-        )
+        permission = Permission.Single(name = Manifest.permission.CAMERA)
     )
 
     Scaffold(

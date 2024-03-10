@@ -31,8 +31,7 @@ fun LocationPermissionScreen(
             names = listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-            ),
-            minSdk = 26
+            )
         )
     )
 

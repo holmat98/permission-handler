@@ -1,5 +1,7 @@
 package com.mateuszholik.permissionhandler.models
 
+import android.os.Build
+
 /**
  * Holder of the base information's of the permission. It can be either [Single] or [Coupled].
  */
@@ -15,11 +17,11 @@ sealed interface Permission {
      * Should be used for base permissions that are requested alone, for example CAMERA permission.
      *
      * @property name permission name from [android.Manifest.permission]
-     * @property minSdk minimum sdk version for this permission
+     * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
      */
     data class Single(
         val name: String,
-        override val minSdk: Int,
+        override val minSdk: Int = Build.VERSION_CODES.O,
     ) : Permission
 
     /**
@@ -27,10 +29,10 @@ sealed interface Permission {
      * ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION
      *
      * @property names list of permissions names from [android.Manifest.permission]
-     * @property minSdk minimum sdk version for this permission
+     * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
      */
     data class Coupled(
         val names: List<String>,
-        override val minSdk: Int,
+        override val minSdk: Int = Build.VERSION_CODES.O,
     ) : Permission
 }

@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.permission
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.permission
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.TitleText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.CommonText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.HeaderText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.TitleText
 
 @Composable
 fun PermissionContent(

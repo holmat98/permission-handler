@@ -1,7 +1,7 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,17 +13,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HeaderText(
+fun TitleText(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.secondary,
-    ) {
+    fontWeight: FontWeight = FontWeight.Normal,
+    color: Color = LocalContentColor.current,
+) {
     Text(
         modifier = modifier,
+        fontSize = 28.sp,
         text = text,
-        fontSize = 32.sp,
-        fontWeight = FontWeight.Bold,
         color = color,
+        fontWeight = fontWeight,
     )
 }
 
@@ -31,9 +32,9 @@ fun HeaderText(
 @Composable
 private fun Preview() {
     Surface {
-        HeaderText(
+        TitleText(
             modifier = Modifier.padding(16.dp),
-            text = "Header"
+            text = "Title"
         )
     }
 }

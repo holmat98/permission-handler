@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
@@ -13,18 +13,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TitleText(
+fun CommonText(
     text: String,
     modifier: Modifier = Modifier,
-    fontWeight: FontWeight = FontWeight.Normal,
     color: Color = LocalContentColor.current,
+    fontWeight: FontWeight = FontWeight.Normal,
 ) {
     Text(
         modifier = modifier,
-        fontSize = 28.sp,
         text = text,
-        color = color,
         fontWeight = fontWeight,
+        fontSize = 24.sp,
+        color = color,
     )
 }
 
@@ -32,9 +32,9 @@ fun TitleText(
 @Composable
 private fun Preview() {
     Surface {
-        TitleText(
+        CommonText(
             modifier = Modifier.padding(16.dp),
-            text = "Title"
+            text = "Common text"
         )
     }
 }

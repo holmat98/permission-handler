@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor

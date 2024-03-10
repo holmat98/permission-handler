@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons

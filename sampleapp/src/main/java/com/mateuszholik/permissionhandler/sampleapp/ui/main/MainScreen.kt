@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.mateuszholik.permissionhandler.sampleapp.BuildConfig
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold.CommonScaffold
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.CommonText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.HeaderText
 
 @Composable
 fun MainScreen(

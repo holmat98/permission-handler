@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.TitleText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.TitleText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

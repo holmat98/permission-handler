@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons
+package com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke

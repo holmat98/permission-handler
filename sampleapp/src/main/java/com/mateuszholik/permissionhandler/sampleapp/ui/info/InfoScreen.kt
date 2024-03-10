@@ -26,12 +26,12 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonOutlinedButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold.CommonScaffold
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.TitleText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonOutlinedButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.HeaderText
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.TitleText
 
 @Composable
 fun InfoScreen(

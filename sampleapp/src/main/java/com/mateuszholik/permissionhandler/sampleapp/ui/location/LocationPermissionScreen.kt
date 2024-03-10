@@ -12,9 +12,9 @@ import androidx.compose.ui.res.stringResource
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.rememberPermissionHandler
 import com.mateuszholik.permissionhandler.sampleapp.R
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.permission.PermissionContent
-import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.permission.PermissionContent
+import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.CommonScaffold
 
 @Composable
 fun LocationPermissionScreen(

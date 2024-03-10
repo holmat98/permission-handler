@@ -56,6 +56,19 @@ object AndroidX {
     }
 }
 
+object Google {
+    object PlayServices {
+        object OssLicenses {
+            private const val version = "17.0.1"
+            private const val classpathVersion = "0.10.6"
+
+            const val PLUGIN = "com.google.android.gms.oss-licenses-plugin"
+            const val DEPENDENCY = "com.google.android.gms:play-services-oss-licenses:$version"
+            const val CLASSPATH = "com.google.android.gms:oss-licenses-plugin:$classpathVersion"
+        }
+    }
+}
+
 object Testing {
 
     object JUnit {

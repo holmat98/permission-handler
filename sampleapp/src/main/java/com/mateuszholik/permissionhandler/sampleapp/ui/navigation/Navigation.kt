@@ -5,6 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.mateuszholik.permissionhandler.sampleapp.ui.camera.CameraPermissionScreen
+import com.mateuszholik.permissionhandler.sampleapp.ui.info.InfoScreen
+import com.mateuszholik.permissionhandler.sampleapp.ui.license.LicenseScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.location.LocationPermissionScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.main.MainScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.notification.NotificationPermissionScreen
@@ -16,6 +18,8 @@ object Navigation {
     private const val CAMERA_PERMISSION_SCREEN = "$ROOT/CAMERA_PERMISSION_SCREEN"
     private const val LOCATION_PERMISSION_SCREEN = "$ROOT/LOCATION_PERMISSION_SCREEN"
     private const val NOTIFICATION_PERMISSION_SCREEN = "$ROOT/NOTIFICATION_PERMISSION_SCREEN"
+    private const val INFO_SCREEN = "$ROOT/INFO_SCREEN"
+    private const val LICENSE_SCREEN = "$ROOT/LICENSE_SCREEN"
 
     fun NavGraphBuilder.navigationGraph(navController: NavController) {
         navigation(startDestination = MAIN_SCREEN, route = ROOT) {
@@ -23,6 +27,8 @@ object Navigation {
             cameraPermissionScreen(navController)
             locationPermissionScreen(navController)
             notificationPermissionScreen(navController)
+            infoScreen(navController)
+            licenseScreen(navController)
         }
     }
 
@@ -32,6 +38,7 @@ object Navigation {
                 onCameraPermissionPressed = { navController.navigateToCameraPermissionScreen() },
                 onLocationPermissionPressed = { navController.navigateToLocationPermissionScreen() },
                 onNotificationPermissionPressed = { navController.navigateToNotificationPermissionScreen() },
+                onInfoPressed = { navController.navigateToInfoScreen() },
             )
         }
     }
@@ -60,6 +67,21 @@ object Navigation {
         }
     }
 
+    private fun NavGraphBuilder.infoScreen(navController: NavController) {
+        composable(INFO_SCREEN) {
+            InfoScreen(
+                onBackPressed = { navController.navigateUp() },
+                onPermissionHandlerLicensePressed = { navController.navigateToLicenseScreen() }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.licenseScreen(navController: NavController) {
+        composable(LICENSE_SCREEN) {
+            LicenseScreen(onBackPressed = { navController.navigateUp() })
+        }
+    }
+
     private fun NavController.navigateToCameraPermissionScreen() =
         navigate(CAMERA_PERMISSION_SCREEN)
 
@@ -68,4 +90,10 @@ object Navigation {
 
     private fun NavController.navigateToNotificationPermissionScreen() =
         navigate(NOTIFICATION_PERMISSION_SCREEN)
+
+    private fun NavController.navigateToInfoScreen() =
+        navigate(INFO_SCREEN)
+
+    private fun NavController.navigateToLicenseScreen() =
+        navigate(LICENSE_SCREEN)
 }

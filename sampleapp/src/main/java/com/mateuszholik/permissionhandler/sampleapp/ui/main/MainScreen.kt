@@ -2,12 +2,12 @@ package com.mateuszholik.permissionhandler.sampleapp.ui.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +21,8 @@ import com.mateuszholik.permissionhandler.sampleapp.BuildConfig
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonButton
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
 
@@ -29,18 +31,17 @@ fun MainScreen(
     onCameraPermissionPressed: () -> Unit,
     onLocationPermissionPressed: () -> Unit,
     onNotificationPermissionPressed: () -> Unit,
+    onInfoPressed: () -> Unit,
 ) {
-    Scaffold {
-        Column(
-            modifier = Modifier.padding(
-                PaddingValues(
-                    top = it.calculateTopPadding(),
-                    start = 16.dp,
-                    bottom = it.calculateBottomPadding(),
-                    end = 16.dp,
-                )
+    CommonScaffold(
+        actions = {
+            CommonIconButton(
+                icon = Icons.Outlined.Info,
+                onClick = onInfoPressed,
             )
-        ) {
+        }
+    ) {
+        Column(modifier = Modifier.padding(it)) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -98,6 +99,7 @@ private fun Preview() {
                 onCameraPermissionPressed = {},
                 onLocationPermissionPressed = {},
                 onNotificationPermissionPressed = {},
+                onInfoPressed = {},
             )
         }
     }

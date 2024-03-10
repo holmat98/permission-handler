@@ -2,6 +2,7 @@ package com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mateuszholik.permissionhandler.sampleapp.R
 
 @Composable
@@ -28,7 +30,7 @@ fun CommonOutlinedButton(
     color: Color = MaterialTheme.colorScheme.primary,
 ) {
     OutlinedButton(
-        modifier = modifier,
+        modifier = modifier.height(75.dp),
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
@@ -44,7 +46,10 @@ fun CommonOutlinedButton(
             painter = painterResource(id = icon),
             contentDescription = null
         )
-        Text(text = text)
+        Text(
+            text = text,
+            fontSize = 16.sp
+        )
     }
 }
 

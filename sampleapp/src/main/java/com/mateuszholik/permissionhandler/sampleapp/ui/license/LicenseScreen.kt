@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,19 +26,34 @@ import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.ui.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.CommonText
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.HeaderText
+import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.texts.LinkifyText
 
 @Composable
 fun LicenseScreen(onBackPressed: () -> Unit) {
+    val listState = rememberLazyListState()
+    val shouldShowTitle by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 1
+        }
+    }
+
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(icon = Icons.Default.ArrowBack, onClick = onBackPressed)
-        }
+        },
+        title = {
+            if (shouldShowTitle) {
+                CommonText(text = stringResource(R.string.license))
+            }
+        },
     ) {
         LazyColumn(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize(),
+            state = listState,
             contentPadding = PaddingValues(vertical = 16.dp),
             horizontalAlignment =Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -57,7 +75,7 @@ fun LicenseScreen(onBackPressed: () -> Unit) {
                 )
             }
             item {
-                Text(
+                LinkifyText(
                     text = stringResource(R.string.permission_handler_license),
                     textAlign = TextAlign.Start
                 )

@@ -12,9 +12,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mateuszholik.permissionhandler.sampleapp.ui.uicomponents.buttons.CommonIconButton
@@ -27,18 +29,22 @@ fun CommonScaffold(
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     navigationIcon: @Composable () -> Unit = {},
+    title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         containerColor = containerColor,
         contentColor = contentColor,
         topBar = {
             TopAppBar(
-                title = {},
+                title = title,
                 navigationIcon = navigationIcon,
                 actions = actions,
+                scrollBehavior = topAppBarScrollBehavior,
             )
         },
         content = {

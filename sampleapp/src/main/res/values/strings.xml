@@ -6,16 +6,14 @@
     <string name="current_state">Current state:</string>
     <string name="github">GitHub Repository</string>
     <string name="information">Information</string>
-    <string name="license">PermissionHandler License</string>
+    <string name="license">Permission Handler License</string>
     <string name="linkedin">Author\'s LinkedIn</string>
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="permission_camera">Camera</string>
     <string name="permission_location">Location</string>
     <string name="permission_notification">Notification</string>
     <string name="permission_handler_license">Apache License\n\nVersion 2.0, January 2004\n\nhttp://www.apache.org/licenses/\n\n
-
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n
-
 1. Definitions.
 
    "License" shall mean the terms and conditions for use, reproduction,

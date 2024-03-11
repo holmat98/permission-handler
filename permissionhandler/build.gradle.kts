@@ -1,6 +1,7 @@
 plugins {
     id(Plugins.ANDROID_LIBRARY)
     id(Plugins.ANDROID_KOTLIN)
+    id(Plugins.JACOCO)
 }
 
 android.configure(

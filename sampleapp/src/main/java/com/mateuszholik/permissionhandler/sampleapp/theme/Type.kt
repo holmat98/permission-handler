@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.theme
+package com.mateuszholik.permissionhandler.sampleapp.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

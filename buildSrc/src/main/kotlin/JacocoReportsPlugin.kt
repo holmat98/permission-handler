@@ -1,4 +1,3 @@
-import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariant
@@ -81,8 +80,8 @@ class JacocoReportsPlugin : Plugin<Project> {
             "**/R*.class",
             "**/BuildConfig.*",
             "**/Manifest*.*",
-            "ndroid/**",
-            "ndroidx/**",
+            "android/**",
+            "androidx/**",
             "om/google/**",
             "om/intellij/**'",
             "unit/**",
@@ -91,9 +90,7 @@ class JacocoReportsPlugin : Plugin<Project> {
             "*/models/**",
             "*/extensions/**",
             "*/utils/**",
-            "*/*Activity*.*",
-            "*/*Screen*.*",
-            "*/base/*",
+            "**/SdkProvider.*"
         )
         val COVERAGE_SOURCE_DIRS = listOf("src/main/java")
     }

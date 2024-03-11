@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.navigation
+package com.mateuszholik.permissionhandler.sampleapp.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

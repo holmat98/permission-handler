@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.theme
+package com.mateuszholik.permissionhandler.sampleapp.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme

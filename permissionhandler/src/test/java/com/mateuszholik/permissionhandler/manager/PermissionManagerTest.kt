@@ -1,11 +1,9 @@
-package com.mateuszholik.permissionhandler
+package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import com.mateuszholik.permissionhandler.manager.PermissionManager
-import com.mateuszholik.permissionhandler.manager.PermissionManagerImpl
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
 import com.mateuszholik.permissionhandler.models.State
@@ -118,7 +116,8 @@ internal class PermissionManagerTest {
         initializePermissionManager()
         mockkActivityShouldShowRationale(shouldShow = true)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
+        val nextPermissionState =
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
         verify(exactly = 1) {
@@ -134,7 +133,8 @@ internal class PermissionManagerTest {
         initializePermissionManager()
         mockkActivityShouldShowRationale(shouldShow = false)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
+        val nextPermissionState =
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.ShowRationale)
         verify(exactly = 1) {
@@ -149,7 +149,8 @@ internal class PermissionManagerTest {
     fun `When permission was granted by the user then Granted is the current state`() {
         initializePermissionManager()
 
-        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
+        val nextPermissionState =
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
         verify(exactly = 1) {
@@ -169,7 +170,8 @@ internal class PermissionManagerTest {
 
         mockkActivityShouldShowRationale(shouldShow = false)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
+        val nextPermissionState =
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to false))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Denied)
         verify(exactly = 1) {
@@ -187,7 +189,8 @@ internal class PermissionManagerTest {
 
         assertThat(permissionManager.initialState).isEqualTo(PermissionState.ShowRationale)
 
-        val nextPermissionState = permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
+        val nextPermissionState =
+            permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
 
         assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
         verify(exactly = 1) {
@@ -337,8 +340,8 @@ internal class PermissionManagerTest {
             isGranted = true
         )
         initializeCoupledPermissionManager(
-           firstPermissionSavedState = State.NOT_ASKED,
-           secondPermissionSavedState = State.GRANTED,
+            firstPermissionSavedState = State.NOT_ASKED,
+            secondPermissionSavedState = State.GRANTED,
         )
 
         val initialState = permissionManager.initialState
@@ -467,8 +470,8 @@ internal class PermissionManagerTest {
         mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_1, shouldShow = true)
         mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_2, shouldShow = true)
         initializeCoupledPermissionManager(
-          firstPermissionSavedState = State.SHOW_RATIONALE,
-          secondPermissionSavedState = State.SHOW_RATIONALE,
+            firstPermissionSavedState = State.SHOW_RATIONALE,
+            secondPermissionSavedState = State.SHOW_RATIONALE,
         )
 
         assertThat(permissionManager.initialState).isEqualTo(PermissionState.ShowRationale)

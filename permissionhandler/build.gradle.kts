@@ -7,9 +7,7 @@ plugins {
 }
 
 androidGitVersion {
-    format = AndroidGitVersion.FORMAT
-    parts = AndroidGitVersion.PARTS
-    multiplier = AndroidGitVersion.MULTIPLIER
+    format = AndroidGitVersion.FORMAT_LIBRARY
 }
 
 android.configure(

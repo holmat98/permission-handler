@@ -3,6 +3,7 @@ object Plugins {
     const val ANDROID_LIBRARY = "com.android.library"
     const val ANDROID_KOTLIN = "org.jetbrains.kotlin.android"
     const val JACOCO = "jacoco-reports"
+    const val MAVEN_PUBLISH = "maven-publish"
 }
 
 object DefaultConfig {

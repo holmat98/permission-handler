@@ -36,7 +36,7 @@ afterEvaluate {
 
                         configurations.implementation.orNull
                             ?.dependencies
-                            ?.filter { it.version != "undefined" && it.group != "org.jacoco" }
+                            ?.filter { it.version != "unspecified" && it.group != "org.jacoco" }
                             ?.forEach {
                                 val node = dependenciesNode.appendNode("dependency")
 

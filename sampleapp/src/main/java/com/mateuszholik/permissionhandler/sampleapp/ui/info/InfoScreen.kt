@@ -123,7 +123,7 @@ private fun openOssLicenses(context: Context) {
 }
 
 private const val LINKED_IN_LINK = "https://linkedin.com/in/mateusz-holik"
-private const val GITHUB_REPOSITORY_LINK = "https://github.com/holmat98/PermissionHandler"
+private const val GITHUB_REPOSITORY_LINK = "https://github.com/holmat98/permission-handler"
 
 @Preview
 @Composable

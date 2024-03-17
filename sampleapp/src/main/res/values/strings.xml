@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Permission Handler</string>
     <string name="copyright">Mateusz Holik \u00A9 2024</string>
     <string name="button_grant_permission">Grant Permission</string>
@@ -12,7 +12,7 @@
     <string name="permission_camera">Camera</string>
     <string name="permission_location">Location</string>
     <string name="permission_notification">Notification</string>
-    <string name="permission_handler_license">Apache License\n\nVersion 2.0, January 2004\n\nhttp://www.apache.org/licenses/\n\n
+    <string name="permission_handler_license" tools:ignore="TypographyOther">Apache License\n\nVersion 2.0, January 2004\n\nhttp://www.apache.org/licenses/\n\n
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n
 1. Definitions.
 
@@ -107,7 +107,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n
    (b) You must cause any modified files to carry prominent notices
        stating that You changed the files; and
    \n\n
-   © You must retain, in the Source form of any Derivative Works
+   (c) You must retain, in the Source form of any Derivative Works
        that You distribute, all copyright, patent, trademark, and
        attribution notices from the Source form of the Work,
        excluding those notices that do not pertain to any part of

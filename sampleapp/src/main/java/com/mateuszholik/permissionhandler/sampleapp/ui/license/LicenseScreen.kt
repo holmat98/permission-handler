@@ -1,5 +1,8 @@
 package com.mateuszholik.permissionhandler.sampleapp.ui.license
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +47,11 @@ fun LicenseScreen(onBackPressed: () -> Unit) {
             CommonIconButton(icon = Icons.Default.ArrowBack, onClick = onBackPressed)
         },
         title = {
-            if (shouldShowTitle) {
+            AnimatedVisibility(
+                visible = shouldShowTitle,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
                 CommonText(text = stringResource(R.string.license))
             }
         },
@@ -55,7 +62,7 @@ fun LicenseScreen(onBackPressed: () -> Unit) {
                 .fillMaxSize(),
             state = listState,
             contentPadding = PaddingValues(vertical = 16.dp),
-            horizontalAlignment =Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {

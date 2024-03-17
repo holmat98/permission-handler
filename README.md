@@ -7,9 +7,37 @@
 <b>Android library to handle permissions flow in applications that are created with jetpack compose.</b>
 
 ### Table of contents
+* [Sample app](#sample-app)
+* [How to download it](#how-to-download-it)
 * [How to use it](#how-to-use-it)
 * [Permission states](#permission-states)
 * [Known issues](#known-issues)
+
+### Sample App
+
+You can download the sample app [here](https://install.appcenter.ms/users/holmat1998/apps/permission-handler/distribution_groups/releases/releases/3)
+
+### How to download it
+
+In `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven(url = "https://jitpack.io")
+    }
+}
+```
+
+In module `build.gradle.kts`:
+
+```kotlin
+dependencies {
+  implementation("com.github.holmat98:permission-handler:1.0.0")
+}
+```
 
 ### How to use it
 

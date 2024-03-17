@@ -3,6 +3,7 @@ object Plugins {
     const val ANDROID_LIBRARY = "com.android.library"
     const val ANDROID_KOTLIN = "org.jetbrains.kotlin.android"
     const val JACOCO = "jacoco-reports"
+    const val MAVEN_PUBLISH = "maven-publish"
 }
 
 object DefaultConfig {
@@ -98,6 +99,7 @@ object AndroidGitVersion {
     const val VERSION = "0.4.14"
     const val PLUGIN = "com.gladed.androidgitversion"
     const val FORMAT = "%tag%%-commit%%-dirty%"
+    const val FORMAT_LIBRARY = "%tag%"
     const val PARTS = 4
     const val MULTIPLIER = 100
 }

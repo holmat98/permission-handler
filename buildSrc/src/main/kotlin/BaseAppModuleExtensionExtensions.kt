@@ -71,8 +71,6 @@ private fun BaseAppModuleExtension.configureDefaultBuildTypes() {
             applicationIdSuffix = ".debug"
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile(Proguard.FILE),
                 Proguard.RULES

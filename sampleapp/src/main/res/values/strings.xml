@@ -12,6 +12,7 @@
     <string name="permission_camera">Camera</string>
     <string name="permission_location">Location</string>
     <string name="permission_notification">Notification</string>
+    <string name="permission_write_external_storage">Write to external storage</string>
     <string name="permission_handler_license" tools:ignore="TypographyOther">Apache License\n\nVersion 2.0, January 2004\n\nhttp://www.apache.org/licenses/\n\n
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n
 1. Definitions.

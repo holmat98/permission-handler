@@ -20,6 +20,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalStateException
 
 internal class PermissionManagerTest {
 
@@ -42,6 +45,45 @@ internal class PermissionManagerTest {
     }
 
     @Test
+    fun `When maxSdk is smaller then minSdk exception is thrown`() {
+        mockkContextCompat(isGranted = false)
+        assertThrows<IllegalStateException> {
+            initializePermissionManager(
+                permission = PERMISSION.copy(
+                    minSdk = 33,
+                    maxSdk = 31,
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `When maxSdk is equal to minSdk exception is not thrown`() {
+        mockkContextCompat(isGranted = false)
+        assertDoesNotThrow {
+            initializePermissionManager(
+                permission = PERMISSION.copy(
+                    minSdk = 31,
+                    maxSdk = 31,
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `When maxSdk is greater than minSdk exception is not thrown`() {
+        mockkContextCompat(isGranted = false)
+        assertDoesNotThrow {
+            initializePermissionManager(
+                permission = PERMISSION.copy(
+                    minSdk = 31,
+                    maxSdk = 34,
+                ),
+            )
+        }
+    }
+
+    @Test
     fun `When saved permission state is GRANTED and ContextCompat returns PERMISSION_GRANTED then the initial state is equal to Granted`() {
         mockkContextCompat(isGranted = true)
         initializePermissionManager(savedState = State.GRANTED)
@@ -59,6 +101,18 @@ internal class PermissionManagerTest {
         val initialState = permissionManager.initialState
 
         assertThat(initialState).isEqualTo(PermissionState.AskForPermission)
+    }
+
+    @Test
+    fun `When Android version is greater than max sdk for the permission then initial state is equal to Granted`() {
+        initializePermissionManager(
+            permission = PERMISSION.copy(maxSdk = 28),
+            androidSdkVersion = 33,
+        )
+
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Granted)
     }
 
     @Test
@@ -756,14 +810,16 @@ internal class PermissionManagerTest {
         const val PERMISSION_NAME_2 = "permission_name_2"
         val PERMISSION = Permission.Single(
             name = PERMISSION_NAME_1,
-            minSdk = 1
+            minSdk = 1,
+            maxSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
         )
         val COUPLED_PERMISSION = Permission.Coupled(
             names = listOf(
                 PERMISSION_NAME_1,
                 PERMISSION_NAME_2,
             ),
-            minSdk = 1
+            minSdk = 1,
+            maxSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
         )
     }
 }

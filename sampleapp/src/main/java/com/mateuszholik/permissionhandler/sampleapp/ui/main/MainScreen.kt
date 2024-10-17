@@ -31,6 +31,7 @@ fun MainScreen(
     onCameraPermissionPressed: () -> Unit,
     onLocationPermissionPressed: () -> Unit,
     onNotificationPermissionPressed: () -> Unit,
+    onWriteExternalStoragePermissionPressed: () -> Unit,
     onInfoPressed: () -> Unit,
 ) {
     CommonScaffold(
@@ -83,6 +84,13 @@ fun MainScreen(
                 textResId = R.string.permission_notification,
                 onClick = onNotificationPermissionPressed,
             )
+            CommonButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(),
+                textResId = R.string.permission_write_external_storage,
+                onClick = onWriteExternalStoragePermissionPressed,
+            )
         }
     }
 }
@@ -99,6 +107,7 @@ private fun Preview() {
                 onCameraPermissionPressed = {},
                 onLocationPermissionPressed = {},
                 onNotificationPermissionPressed = {},
+                onWriteExternalStoragePermissionPressed = {},
                 onInfoPressed = {},
             )
         }

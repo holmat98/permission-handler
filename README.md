@@ -35,9 +35,12 @@ In module `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("com.github.holmat98:permission-handler:1.0.0")
+  implementation("com.github.holmat98:permission-handler:1.1.0")
 }
 ```
+
+Current version:
+[![](https://jitpack.io/v/holmat98/permission-handler.svg)](https://jitpack.io/#holmat98/permission-handler)
 
 ### How to use it
 

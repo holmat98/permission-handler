@@ -42,8 +42,15 @@ internal class PermissionManagerImpl(
             .toMutableMap()
     }
 
+    init {
+        if (permission.maxSdk < permission.minSdk) {
+            error("MaxSdk (${permission.maxSdk}) have to be greater or equal to minSdk (${permission.minSdk}).")
+        }
+    }
+
     override val initialState: PermissionState by lazy {
         when {
+            SdkProvider.provide() > permission.maxSdk ||
             SdkProvider.provide() < permission.minSdk -> PermissionState.Granted
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale

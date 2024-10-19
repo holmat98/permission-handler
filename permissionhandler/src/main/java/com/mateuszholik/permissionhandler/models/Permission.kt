@@ -14,14 +14,22 @@ sealed interface Permission {
     val minSdk: Int
 
     /**
+     * Maximum sdk version that supports this permission. For example for WRITE_EXTERNAL_STORAGE permission
+     * it will be equal to 28 (Android 10).
+     */
+    val maxSdk: Int
+
+    /**
      * Should be used for base permissions that are requested alone, for example CAMERA permission.
      *
      * @property name permission name from [android.Manifest.permission]
      * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
+     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is equal to Build.VERSION.SDK_INT
      */
     data class Single(
         val name: String,
         override val minSdk: Int = Build.VERSION_CODES.O,
+        override val maxSdk: Int = Build.VERSION.SDK_INT,
     ) : Permission
 
     /**
@@ -30,9 +38,11 @@ sealed interface Permission {
      *
      * @property names list of permissions names from [android.Manifest.permission]
      * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
+     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is equal to Build.VERSION.SDK_INT
      */
     data class Coupled(
         val names: List<String>,
         override val minSdk: Int = Build.VERSION_CODES.O,
+        override val maxSdk: Int = Build.VERSION.SDK_INT,
     ) : Permission
 }

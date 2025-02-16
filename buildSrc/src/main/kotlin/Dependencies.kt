@@ -7,9 +7,9 @@ object Plugins {
 }
 
 object DefaultConfig {
-    const val COMPILE_SDK = 34
+    const val COMPILE_SDK = 35
     const val MIN_SDK = 26
-    const val TARGET_SDK = 34
+    const val TARGET_SDK = 35
     const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
     const val CONSUMER_RULES_FILE = "consumer-rules.pro"
 }
@@ -22,7 +22,7 @@ object Proguard {
 object AndroidX {
 
     object CoreKtx {
-        private const val version = "1.12.0"
+        private const val version = "1.15.0"
 
         const val DEPENDENCY = "androidx.core:core-ktx:$version"
 
@@ -34,21 +34,22 @@ object AndroidX {
     }
 
     object Lifecycle {
-        private const val version = "2.6.2"
+        private const val version = "2.8.7"
 
         const val DEPENDENCY = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
     }
 
     object ActivityCompose {
-        private const val version = "1.8.0"
+        private const val version = "1.10.0"
 
         const val DEPENDENCY = "androidx.activity:activity-compose:$version"
     }
 
     object Compose {
-        private const val composeVersion = "1.5.2"
+        private const val composeVersion = "1.7.7"
 
-        const val KOTLIN_COMPILER_EXTENSION_VERSION = "1.5.10"
+        const val KOTLIN_COMPILER_PLUGIN_VERSION = "2.1.0"
+        const val COMPILER_PLUGIN = "org.jetbrains.kotlin.plugin.compose"
         const val UI = "androidx.compose.ui:ui:$composeVersion"
         const val MATERIAL = "androidx.compose.material3:material3:1.2.0-alpha02"
         const val PREVIEW = "androidx.compose.ui:ui-tooling-preview:$composeVersion"

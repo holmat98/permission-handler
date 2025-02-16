@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.rememberPermissionHandler
 import com.mateuszholik.permissionhandler.sampleapp.R
+import com.mateuszholik.permissionhandler.sampleapp.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.permission.PermissionContent
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.CommonScaffold
@@ -38,5 +40,13 @@ fun CameraPermissionScreen(
             permissionState = permissionHandler.currentPermissionState,
             onButtonPressed = permissionHandler.launchPermissionDialog
         )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    PermissionHandlerTheme {
+        CameraPermissionScreen(onBackPressed = {})
     }
 }

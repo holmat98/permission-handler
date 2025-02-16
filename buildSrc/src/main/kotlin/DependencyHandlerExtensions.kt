@@ -31,10 +31,6 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Testing.Mockk.DEPENDENCY)
 }
 
-fun DependencyHandler.ossLicences() {
-    implementation(Google.PlayServices.OssLicenses.DEPENDENCY)
-}
-
 fun DependencyHandler.module(name: String) {
     implementation(project(mapOf("path" to name)))
 }

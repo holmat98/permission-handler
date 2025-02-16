@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.theme.PermissionHandlerTheme
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonButton
@@ -96,13 +95,6 @@ fun InfoScreen(
                 textResId = R.string.license,
                 onClick = onPermissionHandlerLicensePressed,
             )
-            CommonButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                textResId = R.string.open_source_licenses,
-                onClick = { openOssLicenses(context) },
-            )
         }
     }
 }
@@ -110,13 +102,6 @@ fun InfoScreen(
 private fun openWebsite(context: Context, url: String) {
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(url)
-        flags = FLAG_ACTIVITY_NEW_TASK
-    }
-    context.startActivity(intent)
-}
-
-private fun openOssLicenses(context: Context) {
-    val intent = Intent(context, OssLicensesMenuActivity::class.java).apply {
         flags = FLAG_ACTIVITY_NEW_TASK
     }
     context.startActivity(intent)

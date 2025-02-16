@@ -2,7 +2,6 @@ plugins {
     id(Plugins.ANDROID_APPLICATION)
     id(Plugins.ANDROID_KOTLIN)
     id(AndroidGitVersion.PLUGIN)
-    id(Google.PlayServices.OssLicenses.PLUGIN)
     id(AndroidX.Compose.COMPILER_PLUGIN)
 }
 
@@ -28,5 +27,4 @@ dependencies {
     lifecycle()
     activity()
     compose()
-    ossLicences()
 }

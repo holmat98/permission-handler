@@ -16,7 +16,6 @@ fun LibraryExtension.configure(
     configureJava()
     if (isUsingCompose) {
         configureBuildFeatures()
-        configureComposeOptions()
     }
 }
 
@@ -36,12 +35,6 @@ private fun LibraryExtension.configureDefaultConfig() {
 private fun LibraryExtension.configureBuildFeatures() {
     buildFeatures {
         compose = true
-    }
-}
-
-private fun LibraryExtension.configureComposeOptions() {
-    composeOptions {
-        kotlinCompilerExtensionVersion = AndroidX.Compose.KOTLIN_COMPILER_EXTENSION_VERSION
     }
 }
 

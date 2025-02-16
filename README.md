@@ -35,7 +35,7 @@ In module `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("com.github.holmat98:permission-handler:1.1.0")
+  implementation("com.github.holmat98:permission-handler:1.1.1")
 }
 ```
 

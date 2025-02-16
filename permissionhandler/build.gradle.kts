@@ -4,6 +4,7 @@ plugins {
     id(Plugins.JACOCO)
     id(Plugins.MAVEN_PUBLISH)
     id(AndroidGitVersion.PLUGIN)
+    id(AndroidX.Compose.COMPILER_PLUGIN)
 }
 
 androidGitVersion {

@@ -20,7 +20,6 @@ fun BaseAppModuleExtension.configure(
     configureBuildFeatures()
     configureDefaultBuildTypes()
     configureJava()
-    configureComposeOptions()
     configurePackaging()
 }
 
@@ -48,12 +47,6 @@ private fun BaseAppModuleExtension.configureBuildFeatures() {
     buildFeatures {
         buildConfig = true
         compose = true
-    }
-}
-
-private fun BaseAppModuleExtension.configureComposeOptions() {
-    composeOptions {
-        kotlinCompilerExtensionVersion = AndroidX.Compose.KOTLIN_COMPILER_EXTENSION_VERSION
     }
 }
 

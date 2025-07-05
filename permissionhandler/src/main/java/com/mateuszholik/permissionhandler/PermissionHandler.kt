@@ -85,7 +85,8 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                                 permissionLauncher.launch(permission.permissions.toTypedArray())
                             }
 
-                            PermissionState.Denied -> {
+                            PermissionState.Denied,
+                            PermissionState.Granted -> {
                                 settingsLauncher.launch(
                                     Intent(
                                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -97,8 +98,6 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                                     )
                                 )
                             }
-
-                            PermissionState.Granted -> Unit
                         }
                     }
                 )

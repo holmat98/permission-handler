@@ -1,5 +1,6 @@
 package com.mateuszholik.permissionhandler.manager
 
+import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
@@ -81,6 +82,34 @@ internal class PermissionManagerTest {
                 ),
             )
         }
+    }
+
+    @Test
+    fun `When current android version is lower than minSdk then GRANTED is returned`() {
+        mockkContextCompat(isGranted = true)
+        assertDoesNotThrow {
+            initializePermissionManager(
+                permission = PERMISSION.copy(minSdk = 31),
+                androidSdkVersion = 30,
+            )
+        }
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Granted)
+    }
+
+    @Test
+    fun `When current android version is greater than maxSdk then GRANTED is returned`() {
+        mockkContextCompat(isGranted = false)
+        assertDoesNotThrow {
+            initializePermissionManager(
+                permission = PERMISSION.copy(maxSdk = 29),
+                androidSdkVersion = 30,
+            )
+        }
+        val initialState = permissionManager.initialState
+
+        assertThat(initialState).isEqualTo(PermissionState.Granted)
     }
 
     @Test

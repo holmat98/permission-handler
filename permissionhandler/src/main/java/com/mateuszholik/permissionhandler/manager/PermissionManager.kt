@@ -43,15 +43,19 @@ internal class PermissionManagerImpl(
     }
 
     init {
-        if (permission.maxSdk < permission.minSdk) {
+        val maxSdk = permission.maxSdk
+        val minSdk = permission.minSdk
+        if (maxSdk != null && minSdk != null && maxSdk < minSdk) {
             error("MaxSdk (${permission.maxSdk}) have to be greater or equal to minSdk (${permission.minSdk}).")
         }
     }
 
     override val initialState: PermissionState by lazy {
+        val maxSdk = permission.maxSdk
+        val minSdk = permission.minSdk
         when {
-            SdkProvider.provide() > permission.maxSdk ||
-            SdkProvider.provide() < permission.minSdk -> PermissionState.Granted
+            (maxSdk != null && SdkProvider.provide() > maxSdk) ||
+                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied

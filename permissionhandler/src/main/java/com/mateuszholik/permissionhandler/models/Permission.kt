@@ -1,7 +1,5 @@
 package com.mateuszholik.permissionhandler.models
 
-import android.os.Build
-
 /**
  * Holder of the base information's of the permission. It can be either [Single] or [Coupled].
  */
@@ -11,25 +9,25 @@ sealed interface Permission {
      * Minimum sdk version that supports this permission. For example for POST_NOTIFICATIONS permission
      * it will be equal to 33 (Android 13).
      */
-    val minSdk: Int
+    val minSdk: Int?
 
     /**
      * Maximum sdk version that supports this permission. For example for WRITE_EXTERNAL_STORAGE permission
      * it will be equal to 28 (Android 10).
      */
-    val maxSdk: Int
+    val maxSdk: Int?
 
     /**
      * Should be used for base permissions that are requested alone, for example CAMERA permission.
      *
      * @property name permission name from [android.Manifest.permission]
-     * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
-     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is equal to Build.VERSION.SDK_INT
+     * @property minSdk minimum sdk version for this permission. Default value is null
+     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is null
      */
     data class Single(
         val name: String,
-        override val minSdk: Int = Build.VERSION_CODES.O,
-        override val maxSdk: Int = Build.VERSION.SDK_INT,
+        override val minSdk: Int? = null,
+        override val maxSdk: Int? = null,
     ) : Permission
 
     /**
@@ -37,12 +35,12 @@ sealed interface Permission {
      * ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION
      *
      * @property names list of permissions names from [android.Manifest.permission]
-     * @property minSdk minimum sdk version for this permission. Default value is equal to 26 (Android 8)
-     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is equal to Build.VERSION.SDK_INT
+     * @property minSdk minimum sdk version for this permission. Default value is null
+     * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is null
      */
     data class Coupled(
         val names: List<String>,
-        override val minSdk: Int = Build.VERSION_CODES.O,
-        override val maxSdk: Int = Build.VERSION.SDK_INT,
+        override val minSdk: Int? = null,
+        override val maxSdk: Int? = null,
     ) : Permission
 }

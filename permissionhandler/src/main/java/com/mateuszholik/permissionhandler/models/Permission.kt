@@ -35,11 +35,13 @@ sealed interface Permission {
      * ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION
      *
      * @property names list of permissions names from [android.Manifest.permission]
+     * @property areAllRequired only one from all permissions is required. For example when precise location is not required by the app. Default value is true
      * @property minSdk minimum sdk version for this permission. Default value is null
      * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is null
      */
     data class Coupled(
         val names: List<String>,
+        val areAllRequired: Boolean = true,
         override val minSdk: Int? = null,
         override val maxSdk: Int? = null,
     ) : Permission

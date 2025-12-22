@@ -1,12 +1,10 @@
 package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
-import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
-import com.mateuszholik.permissionhandler.extensions.permissions
+import com.mateuszholik.permissionhandler.manager.coupled.CoupledPermissionsManager
+import com.mateuszholik.permissionhandler.manager.single.SinglePermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
-import com.mateuszholik.permissionhandler.models.State
-import com.mateuszholik.permissionhandler.providers.SdkProvider
 import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
 
 internal interface PermissionManager {
@@ -22,108 +20,24 @@ internal interface PermissionManager {
             activity: Activity,
             permission: Permission,
         ): PermissionManager =
-            PermissionManagerImpl(
-                activity = activity,
-                permission = permission,
-                permissionsPreferenceAssistant = PermissionsPreferenceAssistant.newInstance(activity.applicationContext),
-            )
-    }
-}
+            when (permission) {
+                is Permission.Coupled -> {
+                    CoupledPermissionsManager(
+                        activity = activity,
+                        permission = permission,
+                        permissionsPreferenceAssistant =
+                            PermissionsPreferenceAssistant.newInstance(activity.applicationContext),
+                    )
+                }
 
-internal class PermissionManagerImpl(
-    permission: Permission,
-    private val permissionsPreferenceAssistant: PermissionsPreferenceAssistant,
-    private val activity: Activity,
-) : PermissionManager {
-
-    private val states: MutableMap<String, State> by lazy {
-        permission.permissions
-            .associateWith { getInitialStateFor(it) }
-            .toMutableMap()
-    }
-
-    init {
-        val maxSdk = permission.maxSdk
-        val minSdk = permission.minSdk
-        if (maxSdk != null && minSdk != null && maxSdk < minSdk) {
-            error("MaxSdk (${permission.maxSdk}) have to be greater or equal to minSdk (${permission.minSdk}).")
-        }
-    }
-
-    override val initialState: PermissionState by lazy {
-        val maxSdk = permission.maxSdk
-        val minSdk = permission.minSdk
-        when {
-            (maxSdk != null && SdkProvider.provide() > maxSdk) ||
-                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted
-            states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
-            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
-            states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
-        }
-    }
-
-    override fun handlePermissionResult(result: Map<String, Boolean>): PermissionState {
-        result.forEach { (permissionName, isGranted) ->
-            states[permissionName]?.let { currentState ->
-                val nextState = currentState.getNextState(permissionName, isGranted)
-                permissionsPreferenceAssistant.saveState(permissionName, nextState)
-                states[permissionName] = nextState
-            }
-        }
-
-        return when {
-            states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
-            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
-            states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
-        }
-    }
-
-    override fun handleBackFromSettings(): PermissionState {
-        states.forEach { (permissionName, state) ->
-            val nextState = state.getNextState(
-                permissionName = permissionName,
-                isGranted = activity.isPermissionGranted(permissionName),
-            )
-            if (state != nextState) {
-                permissionsPreferenceAssistant.saveState(permissionName, nextState)
-                states[permissionName] = nextState
-            }
-        }
-
-        return when {
-            states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
-            states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
-        }
-    }
-
-    private fun getInitialStateFor(permissionName: String): State =
-        when (permissionsPreferenceAssistant.getState(permissionName)) {
-            State.NOT_ASKED -> State.NOT_ASKED
-            State.SHOW_RATIONALE -> {
-                if (activity.shouldShowRequestPermissionRationale(permissionName)) {
-                    State.SHOW_RATIONALE
-                } else {
-                    State.DENIED
+                is Permission.Single -> {
+                    SinglePermissionManager(
+                        activity = activity,
+                        permission = permission,
+                        permissionsPreferenceAssistant =
+                            PermissionsPreferenceAssistant.newInstance(activity.applicationContext),
+                    )
                 }
             }
-            State.DENIED -> State.DENIED
-            State.GRANTED -> {
-                if (activity.isPermissionGranted(permissionName)) {
-                    State.GRANTED
-                } else {
-                    State.NOT_ASKED
-                }
-            }
-        }
-
-    private fun State.getNextState(permissionName: String, isGranted: Boolean): State =
-        when {
-            isGranted -> State.GRANTED
-            this == State.NOT_ASKED ||
-                    activity.shouldShowRequestPermissionRationale(permissionName) -> State.SHOW_RATIONALE
-            else -> State.DENIED
-        }
+    }
 }

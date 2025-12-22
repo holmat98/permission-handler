@@ -86,6 +86,7 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                             }
 
                             PermissionState.Denied,
+                            PermissionState.PartiallyGranted,
                             PermissionState.Granted -> {
                                 settingsLauncher.launch(
                                     Intent(

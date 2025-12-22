@@ -1,6 +1,7 @@
 package com.mateuszholik.permissionhandler.manager
 
 import android.app.Activity
+import android.content.res.TypedArray
 import com.mateuszholik.permissionhandler.manager.coupled.CoupledPermissionsManager
 import com.mateuszholik.permissionhandler.manager.single.SinglePermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
@@ -10,6 +11,8 @@ import com.mateuszholik.permissionhandler.utils.PermissionsPreferenceAssistant
 internal interface PermissionManager {
 
     val initialState: PermissionState
+
+    fun getPermissionsToAsk(): Array<String>
 
     fun handlePermissionResult(result: Map<String, Boolean>): PermissionState
 

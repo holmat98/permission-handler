@@ -1,6 +1,7 @@
 package com.mateuszholik.permissionhandler.manager.single
 
 import android.app.Activity
+import android.content.res.TypedArray
 import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
@@ -44,6 +45,9 @@ internal class SinglePermissionManager(
             error("MaxSdk (${permission.maxSdk}) have to be greater or equal to minSdk (${permission.minSdk}).")
         }
     }
+
+    override fun getPermissionsToAsk(): Array<String> =
+        listOf(permission.name).toTypedArray()
 
     override fun handlePermissionResult(result: Map<String, Boolean>): PermissionState {
         result.forEach { (permissionName, isGranted) ->

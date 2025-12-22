@@ -1,5 +1,6 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.writeexternal
+package com.mateuszholik.permissionhandler.sampleapp.ui.locationcoarse
 
+import android.Manifest
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -8,19 +9,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.rememberPermissionHandler
 import com.mateuszholik.permissionhandler.sampleapp.R
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.permission.PermissionContent
 import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.CommonScaffold
-import com.mateuszholik.permissionhandler.utils.PermissionsConstants
 
 @Composable
-fun WriteExternalStoragePermissionScreen(
+fun LocationCoarsePermissionScreen(
     onBackPressed: () -> Unit,
 ) {
     val permissionHandler by rememberPermissionHandler(
-        permission = PermissionsConstants.WRITE_EXTERNAL_STORAGE,
+        permission = Permission.Coupled(
+            names = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ),
+            mainPermissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        )
     )
 
     CommonScaffold(
@@ -32,8 +39,8 @@ fun WriteExternalStoragePermissionScreen(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize(),
-            permissionName = stringResource(R.string.permission_write_external_storage).uppercase(),
-            permissionIconDrawable = R.drawable.ic_write_external_storage,
+            permissionName = stringResource(R.string.permission_location_coarse).uppercase(),
+            permissionIconDrawable = R.drawable.ic_location,
             permissionState = permissionHandler.currentPermissionState,
             onButtonPressed = permissionHandler.launchPermissionDialog
         )

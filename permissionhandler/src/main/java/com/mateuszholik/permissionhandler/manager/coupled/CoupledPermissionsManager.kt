@@ -2,7 +2,6 @@ package com.mateuszholik.permissionhandler.manager.coupled
 
 import android.app.Activity
 import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
-import com.mateuszholik.permissionhandler.extensions.permissions
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
@@ -19,7 +18,7 @@ internal class CoupledPermissionsManager(
 ) : PermissionManager {
 
     private val states: MutableMap<String, State> by lazy {
-        permission.permissions
+        permission.names
             .associateWith {
                 StateUtils.getInitialStateFor(
                     permissionName = it,
@@ -33,11 +32,12 @@ internal class CoupledPermissionsManager(
     override val initialState: PermissionState by lazy {
         val maxSdk = permission.maxSdk
         val minSdk = permission.minSdk
+
         when {
             (maxSdk != null && SdkProvider.provide() > maxSdk) ||
                     (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted
 
-            permission.areAllRequired.not() && states.containsValue(State.GRANTED) -> PermissionState.PartiallyGranted
+            getIsPartiallyGranted() -> PermissionState.PartiallyGranted
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied
@@ -53,6 +53,9 @@ internal class CoupledPermissionsManager(
         }
     }
 
+    override fun getPermissionsToAsk(): Array<String> =
+        permission.names.toTypedArray()
+
     override fun handlePermissionResult(result: Map<String, Boolean>): PermissionState {
         result.forEach { (permissionName, isGranted) ->
             states[permissionName]?.let { currentState ->
@@ -67,7 +70,7 @@ internal class CoupledPermissionsManager(
         }
 
         return when {
-            permission.areAllRequired.not() && states.containsValue(State.GRANTED) -> PermissionState.PartiallyGranted
+            getIsPartiallyGranted() -> PermissionState.PartiallyGranted
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied
@@ -93,5 +96,20 @@ internal class CoupledPermissionsManager(
             states.containsValue(State.DENIED) -> PermissionState.Denied
             else -> PermissionState.Granted
         }
+    }
+
+    private fun getIsPartiallyGranted(): Boolean {
+        if (permission.mainPermissions.isNullOrEmpty()) {
+            return false
+        }
+
+        val areNotRequiredGranted = permission.names
+            .filterNot { it in permission.mainPermissions }
+            .all { states[it] == State.GRANTED }
+
+        val areMainNotGranted = permission.mainPermissions
+            .all { states[it] != State.GRANTED }
+
+        return areNotRequiredGranted && areMainNotGranted
     }
 }

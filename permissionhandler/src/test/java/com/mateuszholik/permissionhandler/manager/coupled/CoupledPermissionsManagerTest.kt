@@ -455,33 +455,33 @@ internal class CoupledPermissionsManagerTest {
     }
 
     @Test
-    fun `PermissionManager returns partially granted when one permission is granted for areAllRequired set to false`() {
+    fun `PermissionManager returns partially granted when not main permission is granted`() {
         initializeCoupledPermissionManager(
             permission = COUPLED_PARTIALLY_GRANTED_PERMISSION,
         )
 
         Assertions.assertThat(permissionManager.initialState).isEqualTo(PermissionState.AskForPermission)
 
-        mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_1, shouldShow = true)
-        mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_2, shouldShow = false)
+        mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_1, shouldShow = false)
+        mockkActivityShouldShowRationale(permissionName = PERMISSION_NAME_2, shouldShow = true)
 
         Assertions.assertThat(
             permissionManager.handlePermissionResult(
                 result = mapOf(
-                    PERMISSION_NAME_1 to false,
-                    PERMISSION_NAME_2 to true,
+                    PERMISSION_NAME_1 to true,
+                    PERMISSION_NAME_2 to false,
                 )
             )
         ).isEqualTo(PermissionState.PartiallyGranted)
 
         verify {
-            permissionsPreferenceAssistant.saveState(PERMISSION_NAME_1, State.SHOW_RATIONALE)
-            permissionsPreferenceAssistant.saveState(PERMISSION_NAME_2, State.GRANTED)
+            permissionsPreferenceAssistant.saveState(PERMISSION_NAME_1, State.GRANTED)
+            permissionsPreferenceAssistant.saveState(PERMISSION_NAME_2, State.SHOW_RATIONALE)
         }
     }
 
     @Test
-    fun `When one permission is granted and second no and areAllRequired is equal to false then PartiallyGranted is returned`() {
+    fun `When required permissions are granted then PartiallyGranted is returned`() {
         mockkContextCompat(permissionName = PERMISSION_NAME_1, isGranted = true)
         mockkContextCompat(permissionName = PERMISSION_NAME_2, isGranted = false)
 
@@ -541,16 +541,15 @@ internal class CoupledPermissionsManagerTest {
             ),
             minSdk = 1,
             maxSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
-            areAllRequired = true,
         )
         val COUPLED_PARTIALLY_GRANTED_PERMISSION = Permission.Coupled(
             names = listOf(
                 PERMISSION_NAME_1,
                 PERMISSION_NAME_2,
             ),
+            mainPermissions = listOf(PERMISSION_NAME_2),
             minSdk = 1,
             maxSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
-            areAllRequired = false,
         )
     }
 }

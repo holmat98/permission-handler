@@ -10,6 +10,7 @@
     <string name="linkedin">Author\'s LinkedIn</string>
     <string name="permission_camera">Camera</string>
     <string name="permission_location">Location</string>
+    <string name="permission_location_coarse">Location Coarse</string>
     <string name="permission_notification">Notification</string>
     <string name="permission_read_images">Read images</string>
     <string name="permission_write_external_storage">Write to external storage</string>

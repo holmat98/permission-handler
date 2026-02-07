@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import com.mateuszholik.permissionhandler.extensions.activity
-import com.mateuszholik.permissionhandler.extensions.permissions
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
 import com.mateuszholik.permissionhandler.models.PermissionState
@@ -82,10 +81,11 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                         when (state) {
                             PermissionState.AskForPermission,
                             PermissionState.ShowRationale -> {
-                                permissionLauncher.launch(permission.permissions.toTypedArray())
+                                permissionLauncher.launch(permissionManager.getPermissionsToAsk())
                             }
 
                             PermissionState.Denied,
+                            PermissionState.PartiallyGranted,
                             PermissionState.Granted -> {
                                 settingsLauncher.launch(
                                     Intent(

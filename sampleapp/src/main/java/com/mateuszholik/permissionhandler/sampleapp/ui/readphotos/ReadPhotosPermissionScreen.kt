@@ -1,4 +1,4 @@
-package com.mateuszholik.permissionhandler.sampleapp.ui.writeexternal
+package com.mateuszholik.permissionhandler.sampleapp.ui.readphotos
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,11 +16,11 @@ import com.mateuszholik.permissionhandler.sampleapp.uicomponents.scaffold.Common
 import com.mateuszholik.permissionhandler.utils.PermissionsConstants
 
 @Composable
-fun WriteExternalStoragePermissionScreen(
+fun ReadPhotosPermissionScreen(
     onBackPressed: () -> Unit,
 ) {
     val permissionHandler by rememberPermissionHandler(
-        permission = PermissionsConstants.WRITE_EXTERNAL_STORAGE,
+        permission = PermissionsConstants.READ_PHOTOS_PERMISSION,
     )
 
     CommonScaffold(
@@ -32,8 +32,8 @@ fun WriteExternalStoragePermissionScreen(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize(),
-            permissionName = stringResource(R.string.permission_write_external_storage).uppercase(),
-            permissionIconDrawable = R.drawable.ic_write_external_storage,
+            permissionName = stringResource(R.string.permission_read_images).uppercase(),
+            permissionIconDrawable = R.drawable.ic_notification,
             permissionState = permissionHandler.currentPermissionState,
             onButtonPressed = permissionHandler.launchPermissionDialog
         )

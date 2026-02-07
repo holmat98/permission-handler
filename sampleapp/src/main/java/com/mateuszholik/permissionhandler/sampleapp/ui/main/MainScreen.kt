@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
@@ -30,8 +31,10 @@ import com.mateuszholik.permissionhandler.sampleapp.uicomponents.texts.HeaderTex
 fun MainScreen(
     onCameraPermissionPressed: () -> Unit,
     onLocationPermissionPressed: () -> Unit,
+    onLocationCoarsePermissionPressed: () -> Unit,
     onNotificationPermissionPressed: () -> Unit,
     onWriteExternalStoragePermissionPressed: () -> Unit,
+    onReadImagesPressed: () -> Unit,
     onInfoPressed: () -> Unit,
 ) {
     CommonScaffold(
@@ -42,55 +45,88 @@ fun MainScreen(
             )
         }
     ) {
-        Column(modifier = Modifier.padding(it)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
-                )
-                HeaderText(text = stringResource(R.string.app_name))
-                CommonText(
-                    text = BuildConfig.VERSION_NAME,
-                    fontWeight = FontWeight.Bold,
+        LazyColumn(modifier = Modifier.padding(it)) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                    )
+                    HeaderText(text = stringResource(R.string.app_name))
+                    CommonText(
+                        text = BuildConfig.VERSION_NAME,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_camera,
+                    onClick = onCameraPermissionPressed,
                 )
             }
 
-            CommonButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                textResId = R.string.permission_camera,
-                onClick = onCameraPermissionPressed,
-            )
-            CommonButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                textResId = R.string.permission_location,
-                onClick = onLocationPermissionPressed,
-            )
-            CommonButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                textResId = R.string.permission_notification,
-                onClick = onNotificationPermissionPressed,
-            )
-            CommonButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                textResId = R.string.permission_write_external_storage,
-                onClick = onWriteExternalStoragePermissionPressed,
-            )
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_location,
+                    onClick = onLocationPermissionPressed,
+                )
+            }
+
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_location_coarse,
+                    onClick = onLocationCoarsePermissionPressed,
+                )
+            }
+
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_notification,
+                    onClick = onNotificationPermissionPressed,
+                )
+            }
+
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_write_external_storage,
+                    onClick = onWriteExternalStoragePermissionPressed,
+                )
+            }
+
+            item {
+                CommonButton(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    textResId = R.string.permission_read_images,
+                    onClick = onReadImagesPressed,
+                )
+            }
         }
     }
 }
@@ -106,8 +142,10 @@ private fun Preview() {
             MainScreen(
                 onCameraPermissionPressed = {},
                 onLocationPermissionPressed = {},
+                onLocationCoarsePermissionPressed = {},
                 onNotificationPermissionPressed = {},
                 onWriteExternalStoragePermissionPressed = {},
+                onReadImagesPressed = {},
                 onInfoPressed = {},
             )
         }

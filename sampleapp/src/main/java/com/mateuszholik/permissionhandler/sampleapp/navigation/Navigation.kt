@@ -12,8 +12,10 @@ import com.mateuszholik.permissionhandler.sampleapp.ui.camera.CameraPermissionSc
 import com.mateuszholik.permissionhandler.sampleapp.ui.info.InfoScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.license.LicenseScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.location.LocationPermissionScreen
+import com.mateuszholik.permissionhandler.sampleapp.ui.locationcoarse.LocationCoarsePermissionScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.main.MainScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.notification.NotificationPermissionScreen
+import com.mateuszholik.permissionhandler.sampleapp.ui.readphotos.ReadPhotosPermissionScreen
 import com.mateuszholik.permissionhandler.sampleapp.ui.writeexternal.WriteExternalStoragePermissionScreen
 
 object Navigation {
@@ -22,20 +24,25 @@ object Navigation {
     private const val MAIN_SCREEN = "$ROOT/MAIN_SCREEN"
     private const val CAMERA_PERMISSION_SCREEN = "$ROOT/CAMERA_PERMISSION_SCREEN"
     private const val LOCATION_PERMISSION_SCREEN = "$ROOT/LOCATION_PERMISSION_SCREEN"
+    private const val LOCATION_COARSE_PERMISSION_SCREEN = "$ROOT/LOCATION_COARSE_PERMISSION_SCREEN"
     private const val NOTIFICATION_PERMISSION_SCREEN = "$ROOT/NOTIFICATION_PERMISSION_SCREEN"
     private const val INFO_SCREEN = "$ROOT/INFO_SCREEN"
     private const val LICENSE_SCREEN = "$ROOT/LICENSE_SCREEN"
     private const val WRITE_EXTERNAL_STORAGE_SCREEN = "$ROOT/WRITE_EXTERNAL_STORAGE_SCREEN"
+
+    private const val READ_IMAGES_SCREEN = "$ROOT/READ_IMAGES"
 
     fun NavGraphBuilder.navigationGraph(navController: NavController) {
         navigation(startDestination = MAIN_SCREEN, route = ROOT) {
             mainScreen(navController)
             cameraPermissionScreen(navController)
             locationPermissionScreen(navController)
+            locationCoarsePermissionScreen(navController)
             notificationPermissionScreen(navController)
             infoScreen(navController)
             licenseScreen(navController)
             writeExternalStoragePermissionScreen(navController)
+            readImages(navController)
         }
     }
 
@@ -44,8 +51,10 @@ object Navigation {
             MainScreen(
                 onCameraPermissionPressed = { navController.navigateToCameraPermissionScreen() },
                 onLocationPermissionPressed = { navController.navigateToLocationPermissionScreen() },
+                onLocationCoarsePermissionPressed = { navController.navigateToLocationCoarsePermissionScreen() },
                 onNotificationPermissionPressed = { navController.navigateToNotificationPermissionScreen() },
                 onWriteExternalStoragePermissionPressed = { navController.navigateToWriteExternalStorageScreen() },
+                onReadImagesPressed = { navController.navigateToReadImagesScreen() },
                 onInfoPressed = { navController.navigateToInfoScreen() },
             )
         }
@@ -70,6 +79,18 @@ object Navigation {
             exitTransition = { horizontalExitAnimation },
         ) {
             LocationPermissionScreen(
+                onBackPressed = { navController.navigateUp() }
+            )
+        }
+    }
+
+    private fun NavGraphBuilder.locationCoarsePermissionScreen(navController: NavController) {
+        composable(
+            route = LOCATION_COARSE_PERMISSION_SCREEN,
+            enterTransition = { horizontalEnterAnimation },
+            exitTransition = { horizontalExitAnimation },
+        ) {
+            LocationCoarsePermissionScreen(
                 onBackPressed = { navController.navigateUp() }
             )
         }
@@ -122,11 +143,24 @@ object Navigation {
         }
     }
 
+    private fun NavGraphBuilder.readImages(navController: NavController) {
+        composable(
+            route = READ_IMAGES_SCREEN,
+            enterTransition = { horizontalEnterAnimation },
+            exitTransition = { horizontalExitAnimation },
+        ) {
+            ReadPhotosPermissionScreen(onBackPressed = { navController.navigateUp() })
+        }
+    }
+
     private fun NavController.navigateToCameraPermissionScreen() =
         navigate(CAMERA_PERMISSION_SCREEN)
 
     private fun NavController.navigateToLocationPermissionScreen() =
         navigate(LOCATION_PERMISSION_SCREEN)
+
+    private fun NavController.navigateToLocationCoarsePermissionScreen() =
+        navigate(LOCATION_COARSE_PERMISSION_SCREEN)
 
     private fun NavController.navigateToNotificationPermissionScreen() =
         navigate(NOTIFICATION_PERMISSION_SCREEN)
@@ -139,6 +173,9 @@ object Navigation {
 
     private fun NavController.navigateToWriteExternalStorageScreen() =
         navigate(WRITE_EXTERNAL_STORAGE_SCREEN)
+
+    private fun NavController.navigateToReadImagesScreen() =
+        navigate(READ_IMAGES_SCREEN)
 
     private const val ANIMATION_DURATION = 400
 

@@ -1,7 +1,6 @@
 package com.mateuszholik.permissionhandler.manager.single
 
 import android.app.Activity
-import android.content.res.TypedArray
 import com.mateuszholik.permissionhandler.extensions.isPermissionGranted
 import com.mateuszholik.permissionhandler.manager.PermissionManager
 import com.mateuszholik.permissionhandler.models.Permission
@@ -29,12 +28,12 @@ internal class SinglePermissionManager(
         val minSdk = permission.minSdk
         when {
             (maxSdk != null && SdkProvider.provide() > maxSdk) ||
-                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted
+                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted()
 
             state == State.NOT_ASKED -> PermissionState.AskForPermission
             state == State.SHOW_RATIONALE -> PermissionState.ShowRationale
             state == State.DENIED -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 
@@ -64,7 +63,7 @@ internal class SinglePermissionManager(
             State.NOT_ASKED -> PermissionState.AskForPermission
             State.SHOW_RATIONALE -> PermissionState.ShowRationale
             State.DENIED -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 
@@ -82,7 +81,7 @@ internal class SinglePermissionManager(
         return when (state) {
             State.SHOW_RATIONALE -> PermissionState.ShowRationale
             State.DENIED -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 }

@@ -35,7 +35,7 @@ sealed interface Permission {
      * ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION.
      *
      * @property names list of permissions names from [android.Manifest.permission]
-     * @property mainPermissions list of main permissions. If null or empty then all provided in [names] are required. If it is not empty and all permissions except [mainPermissions] are granted then [PartiallyGranted](com.mateuszholik.permissionhandler.models.PermissionState.PartiallyGranted) will be returned
+     * @property mainPermissions list of main permissions. If null or empty then all provided in [names] are required. If it is not empty and all permissions except [mainPermissions] are granted then [Granted(true)](com.mateuszholik.permissionhandler.models.PermissionState.Granted) will be returned
      * @property minSdk minimum sdk version for this permission. Default value is null
      * @property maxSdk maximum sdk version for this permission. Must be bigger than minSdk. Default value is null
      */

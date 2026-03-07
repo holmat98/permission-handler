@@ -52,7 +52,7 @@ internal class CoupledPermissionsManagerTest {
 
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -84,7 +84,7 @@ internal class CoupledPermissionsManagerTest {
 
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -206,7 +206,7 @@ internal class CoupledPermissionsManagerTest {
             )
         )
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -271,7 +271,7 @@ internal class CoupledPermissionsManagerTest {
             )
         )
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -297,7 +297,7 @@ internal class CoupledPermissionsManagerTest {
 
         val nextPermissionState = permissionManager.handleBackFromSettings()
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -446,7 +446,7 @@ internal class CoupledPermissionsManagerTest {
 
         Assertions.assertThat(
             permissionManager.handleBackFromSettings()
-        ).isEqualTo(PermissionState.Granted)
+        ).isEqualTo(PermissionState.Granted())
 
         verify {
             permissionsPreferenceAssistant.saveState(PERMISSION_NAME_1, State.GRANTED)
@@ -472,7 +472,7 @@ internal class CoupledPermissionsManagerTest {
                     PERMISSION_NAME_2 to false,
                 )
             )
-        ).isEqualTo(PermissionState.PartiallyGranted)
+        ).isEqualTo(PermissionState.Granted(true))
 
         verify {
             permissionsPreferenceAssistant.saveState(PERMISSION_NAME_1, State.GRANTED)
@@ -481,7 +481,7 @@ internal class CoupledPermissionsManagerTest {
     }
 
     @Test
-    fun `When required permissions are granted then PartiallyGranted is returned`() {
+    fun `When required permissions are granted then Granted(true) is returned`() {
         mockkContextCompat(permissionName = PERMISSION_NAME_1, isGranted = true)
         mockkContextCompat(permissionName = PERMISSION_NAME_2, isGranted = false)
 
@@ -491,7 +491,7 @@ internal class CoupledPermissionsManagerTest {
             secondPermissionSavedState = State.SHOW_RATIONALE,
         )
 
-        Assertions.assertThat(permissionManager.initialState).isEqualTo(PermissionState.PartiallyGranted)
+        Assertions.assertThat(permissionManager.initialState).isEqualTo(PermissionState.Granted(true))
     }
 
     private fun initializeCoupledPermissionManager(

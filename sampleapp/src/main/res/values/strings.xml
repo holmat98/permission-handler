@@ -2,6 +2,7 @@
     <string name="app_name">Permission Handler</string>
     <string name="copyright">Mateusz Holik \u00A9 2024</string>
     <string name="button_grant_permission">Grant Permission</string>
+    <string name="button_manage_selection">Manage selection</string>
     <string name="button_open_settings">Open Settings</string>
     <string name="current_state">Current state:</string>
     <string name="github">GitHub Repository</string>

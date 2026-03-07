@@ -93,7 +93,7 @@ internal class SinglePermissionManagerTest {
         }
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -107,7 +107,7 @@ internal class SinglePermissionManagerTest {
         }
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -117,7 +117,7 @@ internal class SinglePermissionManagerTest {
 
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -139,7 +139,7 @@ internal class SinglePermissionManagerTest {
 
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -151,7 +151,7 @@ internal class SinglePermissionManagerTest {
 
         val initialState = permissionManager.initialState
 
-        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(initialState).isEqualTo(PermissionState.Granted())
     }
 
     @Test
@@ -233,7 +233,7 @@ internal class SinglePermissionManagerTest {
         val nextPermissionState =
             permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -273,7 +273,7 @@ internal class SinglePermissionManagerTest {
         val nextPermissionState =
             permissionManager.handlePermissionResult(result = mapOf(PERMISSION_NAME_1 to true))
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -291,7 +291,7 @@ internal class SinglePermissionManagerTest {
 
         val nextPermissionState = permissionManager.handleBackFromSettings()
 
-        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted)
+        Assertions.assertThat(nextPermissionState).isEqualTo(PermissionState.Granted())
         verify(exactly = 1) {
             permissionsPreferenceAssistant.saveState(
                 PERMISSION_NAME_1,
@@ -361,7 +361,7 @@ internal class SinglePermissionManagerTest {
 
         Assertions.assertThat(
             permissionManager.handleBackFromSettings()
-        ).isEqualTo(PermissionState.Granted)
+        ).isEqualTo(PermissionState.Granted())
 
         verify { permissionsPreferenceAssistant.saveState(PERMISSION_NAME_1, State.GRANTED) }
     }

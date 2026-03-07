@@ -2,7 +2,7 @@ package com.mateuszholik.permissionhandler.models
 
 /**
  * State of the permission. It can have five states:
- * [AskForPermission], [ShowRationale], [Denied], [PartiallyGranted], [Granted]
+ * [AskForPermission], [ShowRationale], [Denied], [Granted]
  */
 sealed interface PermissionState {
 
@@ -22,13 +22,9 @@ sealed interface PermissionState {
     data object Denied : PermissionState
 
     /**
-     * Permission is granted partially. It will be returned for example when user selects
-     * access to only selected photos.
-     */
-    data object PartiallyGranted : PermissionState
-
-    /**
      * Permission granted.
+     *
+     * @param isPartiallyGranted set to true when for example READ_MEDIA_VISUAL_USER_SELECTED is selected by user
      */
-    data object Granted : PermissionState
+    data class Granted(val isPartiallyGranted: Boolean = false) : PermissionState
 }

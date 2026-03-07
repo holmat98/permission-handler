@@ -35,13 +35,13 @@ internal class CoupledPermissionsManager(
 
         when {
             (maxSdk != null && SdkProvider.provide() > maxSdk) ||
-                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted
+                    (minSdk != null && SdkProvider.provide() < minSdk) -> PermissionState.Granted()
 
-            getIsPartiallyGranted() -> PermissionState.PartiallyGranted
+            getIsPartiallyGranted() -> PermissionState.Granted(isPartiallyGranted = true)
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 
@@ -70,11 +70,11 @@ internal class CoupledPermissionsManager(
         }
 
         return when {
-            getIsPartiallyGranted() -> PermissionState.PartiallyGranted
+            getIsPartiallyGranted() -> PermissionState.Granted(isPartiallyGranted = true)
             states.containsValue(State.NOT_ASKED) -> PermissionState.AskForPermission
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 
@@ -94,7 +94,7 @@ internal class CoupledPermissionsManager(
         return when {
             states.containsValue(State.SHOW_RATIONALE) -> PermissionState.ShowRationale
             states.containsValue(State.DENIED) -> PermissionState.Denied
-            else -> PermissionState.Granted
+            else -> PermissionState.Granted()
         }
     }
 

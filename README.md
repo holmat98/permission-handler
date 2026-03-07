@@ -35,7 +35,7 @@ In module `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("com.github.holmat98:permission-handler:1.1.3")
+  implementation("com.github.holmat98:permission-handler:1.2.1")
 }
 ```
 
@@ -56,16 +56,16 @@ fun Screen() {
     )
     
     when (permissionHandler.currentPermissionState) {
-        PermissionState.AskForPermission -> {
+        is PermissionState.AskForPermission -> {
             // Ask for permission with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.ShowRationale -> {
+        is PermissionState.ShowRationale -> {
             // Show rationale to the user. Show permission dialog with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Denied -> {
+        is PermissionState.Denied -> {
             // Permission is denied forever. Open settings screen with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Granted -> {
+        is PermissionState.Granted -> {
             // Permission is granted.
         }
     }
@@ -85,16 +85,16 @@ fun Screen() {
     )
     
     when (permissionHandler.currentPermissionState) {
-        PermissionState.AskForPermission -> {
+        is PermissionState.AskForPermission -> {
             // Ask for permission with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.ShowRationale -> {
+        is PermissionState.ShowRationale -> {
             // Show rationale to the user. Show permission dialog with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Denied -> {
+        is PermissionState.Denied -> {
             // Permission is denied forever. Open settings screen with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Granted -> {
+        is PermissionState.Granted -> {
             // Permission is granted.
         }
     }
@@ -115,16 +115,16 @@ fun Screen() {
     )
     
     when (permissionHandler.currentPermissionState) {
-        PermissionState.AskForPermission -> {
+        is PermissionState.AskForPermission -> {
             // Ask for permission with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.ShowRationale -> {
+        is PermissionState.ShowRationale -> {
             // Show rationale to the user. Show permission dialog with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Denied -> {
+        is PermissionState.Denied -> {
             // Permission is denied forever. Open settings screen with permissionHandler.launchPermissionDialog().
         }
-        PermissionState.Granted -> {
+        is PermissionState.Granted -> {
             // Permission is granted.
         }
     }
@@ -138,7 +138,7 @@ Permission can be in one of four states:
 * `AskForPermission` -> it is returned when user was never asked for the permission or when user selected ask every time on system dialog.
 * `ShowRationale` -> it is returned when user denied permission once.
 * `Denied` -> it is returned when permission was denied forever and system dialog cannot be shown.
-* `Granted` -> it is returned when user grants the permission.
+* `Granted` -> it is returned when user grants the permission. isPartiallyGranted property will be set to true if for example READ_MEDIA_VISUAL_USER_SELECTED is selected by user
 
 ### Known issues
 

@@ -61,12 +61,12 @@ fun PermissionContent(
                 text = stringResource(R.string.current_state),
             )
             CommonText(
-                text = permissionState::class.java.simpleName,
+                text = permissionState.toString(),
                 fontWeight = FontWeight.Bold,
             )
         }
 
-        if (permissionState != PermissionState.Granted) {
+        if (permissionState !is PermissionState.Granted) {
             CommonButton(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,6 +76,16 @@ fun PermissionContent(
                 } else {
                     R.string.button_grant_permission
                 },
+                onClick = onButtonPressed
+            )
+        }
+
+        if (permissionState is PermissionState.Granted && permissionState.isPartiallyGranted) {
+            CommonButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                textResId = R.string.button_manage_selection,
                 onClick = onButtonPressed
             )
         }
@@ -159,7 +169,28 @@ private fun PreviewGranted() {
                     .fillMaxSize(),
                 permissionName = "CAMERA",
                 permissionIconDrawable = R.drawable.ic_camera,
-                permissionState = PermissionState.Granted,
+                permissionState = PermissionState.Granted(),
+                onButtonPressed = {},
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPartiallyGranted() {
+    PermissionHandlerTheme {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
+            PermissionContent(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize(),
+                permissionName = "CAMERA",
+                permissionIconDrawable = R.drawable.ic_camera,
+                permissionState = PermissionState.Granted(true),
                 onButtonPressed = {},
             )
         }

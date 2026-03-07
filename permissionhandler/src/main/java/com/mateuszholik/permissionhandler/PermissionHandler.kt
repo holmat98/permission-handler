@@ -46,7 +46,7 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
         return remember {
             mutableStateOf(
                 PermissionHandler(
-                    currentPermissionState = PermissionState.Granted,
+                    currentPermissionState = PermissionState.Granted(),
                     launchPermissionDialog = {}
                 )
             )
@@ -79,14 +79,12 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                     currentPermissionState = state,
                     launchPermissionDialog = {
                         when (state) {
-                            PermissionState.AskForPermission,
-                            PermissionState.ShowRationale -> {
+                            is PermissionState.AskForPermission,
+                            is PermissionState.ShowRationale -> {
                                 permissionLauncher.launch(permissionManager.getPermissionsToAsk())
                             }
 
-                            PermissionState.Denied,
-                            PermissionState.PartiallyGranted,
-                            PermissionState.Granted -> {
+                            is PermissionState.Denied -> {
                                 settingsLauncher.launch(
                                     Intent(
                                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -97,6 +95,22 @@ fun rememberPermissionHandler(permission: Permission): State<PermissionHandler> 
                                         )
                                     )
                                 )
+                            }
+                            is PermissionState.Granted -> {
+                                if ((state as PermissionState.Granted).isPartiallyGranted) {
+                                    permissionLauncher.launch(permissionManager.getPermissionsToAsk())
+                                } else {
+                                    settingsLauncher.launch(
+                                        Intent(
+                                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                            Uri.fromParts(
+                                                "package",
+                                                activity.applicationContext.packageName,
+                                                null
+                                            )
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
